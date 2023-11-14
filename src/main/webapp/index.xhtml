@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Guarita Web</title>
+        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>        
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    </h:head>
+    <h:body>   
+        <h:form>
+            <div style="margin: 2px; border-style: solid; padding: 2px;">
+                <h1 style="text-align: center">Guarita Web</h1>
+            </div>
+
+            <div style="width: 1000px; margin: 0 auto;">
+                <h:commandLink action="emprestimo.xhtml">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        Cadastrar Servidor
+                    </button>
+                </h:commandLink>
+            </div>
+
+            <div style="width: 1000px; margin: 0 auto;">
+                <h:commandLink action="espaco.xhtml">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        Cadastrar Espaço / Listas Espaços
+                    </button>
+                </h:commandLink>
+            </div>
+
+            <div style="width: 1000px; margin: 0 auto;">
+                <h:commandLink action="emprestimo.xhtml">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        Cadastrar VIgilante
+                    </button>
+                </h:commandLink>
+            </div>
+
+            <div style="width: 1000px; margin: 0 auto;">
+                <h2 style="margin-bottom: 6px; text-align: center">Espaços Emprestados / Emprestar Espaços</h2>
+                <h:commandLink action="emprestimo.xhtml">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        Emprestar Espaço
+                    </button>
+                </h:commandLink>
+                <ui:repeat value="#{emprestimoMB.emprestimos}" var="emp">
+                    <div style="border-style: solid; margin-top: 3px; padding: 2px;">
+                        <h:panelGroup>
+                            <h3>
+                                <h:outputText value="Espaço: #{emp.espaco.nome}" />
+                            </h3>
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Servidor: "/>
+                                <h:inputText value="#{emp.servidor.nome}" disabled="true" size="30"/>
+                                <h:outputText value="Data/Horário Início do Empréstimo: "/>
+                                <h:inputText value="#{emp.dataInicio}" disabled="true" size="30">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                                </h:inputText>
+                                <h:outputText value="Data/Horário Fim do Empréstimo: "/>
+                                <h:inputText value="#{emp.dataFim}" disabled="true" size="30">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                                </h:inputText>
+                                <h:outputText value="STATUS: "/>
+                                <h:inputText value="#{emp.status}" disabled="true" size="30"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:panelGrid columns="3">
+                                <h:commandLink action="exemplo1/exemplo1.xhtml">
+                                    <button class="ui-button ui-widget ui-corner-all">
+                                        Entrega da Chave - Professor
+                                    </button>
+                                </h:commandLink>
+                                <h:commandLink action="exemplo1/exemplo1.xhtml">
+                                    <button class="ui-button ui-widget ui-corner-all">
+                                        Entrega da Chave - Vigilante
+                                    </button>
+                                </h:commandLink>
+                                <h:commandLink action="exemplo1/exemplo1.xhtml">
+                                    <button class="ui-button ui-widget ui-corner-all">
+                                        Ocorrência
+                                    </button>
+                                </h:commandLink>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </div>
+                </ui:repeat>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

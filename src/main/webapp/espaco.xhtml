@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <head>
+        <title>Espaços</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <h:body>
+        <h:form>
+            <div>
+                <h:panelGroup>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Espaço: "/>              
+                        <h:inputText value="#{modelMB.espaco.nome}"/>
+
+                        <h:commandButton action="#{modelMB.salvarEspaco}" value="Salvar"/>  
+                        <h:commandButton action="#{modelMB.cancelarEspaco}" value="Cancelar"/>  
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h3>
+                    <h:outputText value="Espaços" rendered="#{!modelMB.espacos.isEmpty()}" />
+                </h3>
+
+                <h:panelGroup rendered="#{!modelMB.espacos.isEmpty()}">
+                    <h:dataTable var="esp" value="#{modelMB.espacos}" border="1" width="100" style="width: 100%">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Espaço: "/>
+                            </f:facet>
+                            <h:outputText value="#{esp.nome}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Disponível: "/>
+                            </f:facet>
+                            <h:outputText value="#{esp.disponivelEmprestimo ? 'Disponível' : 'Indisponível'}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Alterar: "/>
+                            </f:facet>
+                            <h:commandButton action="#{modelMB.alterarEspaco(esp)}" value="Alterar"/>  
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Excluir: "/>
+                            </f:facet>
+                            <h:commandButton action="#{modelMB.excluirEspaco(esp)}" value="Excluir"/>  
+                        </h:column>  
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Ocorrências: "/>
+                            </f:facet>
+                            <h:commandButton action="#{modelMB.visualizarOcorrencias(esp)}" value="Visualizar"/>  
+                        </h:column>  
+                    </h:dataTable>
+                </h:panelGroup>
+            </div>                
+        </h:form>
+    </h:body>
+</html>
