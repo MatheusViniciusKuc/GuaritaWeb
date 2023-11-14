@@ -15,9 +15,24 @@ public class EspacoDAO extends GenericDAO<Espaco> {
 
     public List<Espaco> buscarEspacosDisponiveis() throws PersistenceException {
         try {
-            String hql = "FROM Espaco WHERE disponivelEmprestimo = :disponivel";
+            String hql = "FROM Espaco WHERE disponivelEmprestimo = :disponivel "
+                    + "AND excluido = :excluido";
             Query query = session.createQuery(hql);
             query.setParameter("disponivel", true);
+            query.setParameter("excluido", false);
+
+            return query.getResultList();
+        } catch (HibernateException | NullPointerException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+
+    public List<Espaco> buscarTodosAtivos() throws PersistenceException {
+        try {
+            String hql = "FROM Espaco WHERE excluido = :excluido";
+            Query query = session.createQuery(hql);
+            query.setParameter("excluido", false);
+
             return query.getResultList();
         } catch (HibernateException | NullPointerException e) {
             throw new PersistenceException(e.getMessage());

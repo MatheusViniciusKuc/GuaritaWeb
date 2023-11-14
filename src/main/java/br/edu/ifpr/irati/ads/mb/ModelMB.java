@@ -1,6 +1,7 @@
 package br.edu.ifpr.irati.ads.mb;
 
 import br.edu.ifpr.irati.ads.dao.Dao;
+import br.edu.ifpr.irati.ads.dao.EspacoDAO;
 import br.edu.ifpr.irati.ads.dao.GenericDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Espaco;
@@ -18,7 +19,7 @@ public class ModelMB {
     private Session session;
     private Espaco espaco;
     private List<Espaco> espacos;
-    private Dao<Espaco> espacoDAO;
+    private EspacoDAO espacoDAO;
 
     public ModelMB() {
         configurarConfiguracoesIniciais();
@@ -28,8 +29,8 @@ public class ModelMB {
         session = HibernateUtil.getSessionFactory().openSession();
         try {
             espaco = new Espaco();
-            espacoDAO = new GenericDAO<>(Espaco.class, session);
-            espacos = espacoDAO.buscarTodos();
+            espacoDAO = new EspacoDAO(session);
+            espacos = espacoDAO.buscarTodosAtivos();
         } catch (PersistenceException ex) {
             espacos = new ArrayList<>();
         }
@@ -37,9 +38,13 @@ public class ModelMB {
 
     public void salvarEspaco() {
         try {
-            espacoDAO.salvar(espaco);
-            this.espacos.add(espaco);
-            this.espaco = new Espaco();
+            if (espaco.getId() == null || espaco.getId() == 0) {
+                espacoDAO.salvar(espaco);
+                this.espacos.add(espaco);
+            } else {
+                espacoDAO.alterar(espaco);
+            }
+            cancelarEspaco();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }
@@ -53,8 +58,17 @@ public class ModelMB {
         this.espaco = espaco;
     }
 
-    public void excluirEspaco(Espaco espaco) {
-
+    public void excluirEspaco(Espaco esp) {
+        try {
+            if (espaco.equals(esp)) {
+                cancelarEspaco();
+            }
+            espacos.remove(esp);
+            esp.excluir();
+            espacoDAO.alterar(esp);
+        } catch (PersistenceException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void visualizarOcorrencias(Espaco espaco) {

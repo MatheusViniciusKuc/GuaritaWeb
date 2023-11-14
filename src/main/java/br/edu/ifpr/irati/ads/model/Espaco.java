@@ -75,8 +75,8 @@ public class Espaco implements Serializable {
         return disponivelEmprestimo;
     }
 
-    public void handleExcluido() {
-        this.excluido = !excluido;
+    public void excluir() {
+        this.excluido = true;
     }
 
     public Boolean getExcluido() {

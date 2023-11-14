@@ -58,7 +58,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Ocorrências: "/>
                             </f:facet>
-                            <h:commandButton action="#{modelMB.visualizarOcorrencias(esp)}" value="Visualizar"/>  
+                            <h:commandButton disabled="#{esp.ocorrencias.isEmpty()}" action="#{modelMB.visualizarOcorrencias(esp)}" value="Visualizar"/>  
                         </h:column>  
                     </h:dataTable>
                 </h:panelGroup>
