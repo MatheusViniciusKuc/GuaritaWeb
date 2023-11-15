@@ -7,8 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 public class Ocorrencia implements Serializable {
@@ -23,10 +27,17 @@ public class Ocorrencia implements Serializable {
     @ManyToOne
     @JoinColumn(name = "espaco_id")
     private Espaco espaco;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataRegistrada;
+    @OneToOne
+    private Servidor servidor;
+    @OneToOne
+    private Vigilante vigilante;
 
     public Ocorrencia() {
         this.id = 0;
         this.ocorrido = "";
+        this.dataRegistrada = new Date();
     }
 
     public Ocorrencia(Integer id, String ocorrido, Espaco espaco) {
@@ -57,6 +68,30 @@ public class Ocorrencia implements Serializable {
 
     public Espaco getEspaco() {
         return espaco;
+    }
+
+    public Date getDataRegistrada() {
+        return dataRegistrada;
+    }
+
+    public void setDataRegistrada(Date dataRegistrada) {
+        this.dataRegistrada = dataRegistrada;
+    }
+
+    public Servidor getServidor() {
+        return servidor;
+    }
+
+    public void setServidor(Servidor servidor) {
+        this.servidor = servidor;
+    }
+
+    public void setVigilante(Vigilante vigilante) {
+        this.vigilante = vigilante;
+    }
+
+    public Vigilante getVigilante() {
+        return vigilante;
     }
 
 }

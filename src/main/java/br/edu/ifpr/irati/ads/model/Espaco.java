@@ -43,6 +43,14 @@ public class Espaco implements Serializable {
         this.excluido = false;
     }
 
+    public void excluir() {
+        this.excluido = true;
+    }
+
+    public void adicionarOcorrencia(Ocorrencia ocorrencia) {
+        this.ocorrencias.add(ocorrencia);
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -73,10 +81,6 @@ public class Espaco implements Serializable {
 
     public Boolean getDisponivelEmprestimo() {
         return disponivelEmprestimo;
-    }
-
-    public void excluir() {
-        this.excluido = true;
     }
 
     public Boolean getExcluido() {

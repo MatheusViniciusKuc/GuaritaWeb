@@ -81,9 +81,9 @@ public class EmprestimoMB implements Serializable {
 
             this.exibirModal = true;
         } catch (PersistenceException | NoResultException ex) {
-            Util.mensagemErro("Servidor não encontrado!");
+            Util.mensagemErro("Servidor não encontrado!", "siape_emp");
         } catch (ValidacaoCampoException ex) {
-            Util.mensagemErro(ex.getMessage());
+            Util.mensagemErro(ex.getMessage(), "siape_emp");
         }
     }
 
@@ -95,7 +95,7 @@ public class EmprestimoMB implements Serializable {
             limparTela();
             return "index.xhtml";
         } catch (PersistenceException e) {
-            Util.mensagemErro("Erro ao salvar!");
+            Util.mensagemErro("Erro ao salvar!", "siape_emp");
             return "emprestimo.xhtml";
         }
     }
