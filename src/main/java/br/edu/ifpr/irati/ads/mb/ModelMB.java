@@ -77,7 +77,7 @@ public class ModelMB {
             }
             cancelarEspaco();
         } catch (PersistenceException ex) {
-            Util.mensagemErro("Não foi possível salvar", "nome_esp");
+            Util.mensagemErro("Não foi possível salvar.", "nome_esp");
         } catch (ValidacaoCampoException vce) {
             Util.mensagemErro(vce.getMessage(), "nome_esp");
         }

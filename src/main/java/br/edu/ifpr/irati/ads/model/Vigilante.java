@@ -1,7 +1,7 @@
 package br.edu.ifpr.irati.ads.model;
 
+import jakarta.persistence.Embedded;
 import java.io.Serializable;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
@@ -14,45 +14,48 @@ public class Vigilante implements Serializable {
     @SequenceGenerator(name = "seq-vig",
             sequenceName = "SEQ_VIG", allocationSize = 1, initialValue = 1)
     private Integer id;
-    @Column(name = "nome", nullable = false)
-    private String nome;
-    @Column(name = "cpf", nullable = false)
-    private String cpf;
+    @Embedded
+    private DadosPessoais dadosPessoais;
+    private Boolean excluido;
 
     public Vigilante() {
         this.id = 0;
-        this.nome = "";
-        this.cpf = "";
+        this.dadosPessoais = new DadosPessoais();
+        this.excluido = false;
     }
 
-    public Vigilante(Integer id, String nome, String cpf) {
+    public Vigilante(Integer id, DadosPessoais dadosPessoais) {
         this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
+        this.dadosPessoais = dadosPessoais;
+        this.excluido = false;
     }
 
-    public String getCpf() {
-        return cpf;
+    public void excluir() {
+        this.excluido = true;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setDadosPessoais(DadosPessoais dadosPessoais) {
+        this.dadosPessoais = dadosPessoais;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public DadosPessoais getDadosPessoais() {
+        return dadosPessoais;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setExcluido(Boolean excluido) {
+        this.excluido = excluido;
+    }
+
+    public Boolean getExcluido() {
+        return excluido;
     }
 
 }

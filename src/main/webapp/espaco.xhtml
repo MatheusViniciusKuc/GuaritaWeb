@@ -16,6 +16,10 @@
             </h:commandLink>
 
             <div>
+                <h2>
+                    <h:outputText value="#{modelMB.espaco.id > 0 ? 'Alterar:' : 'Cadastrar:'}" />
+                </h2>
+
                 <h:panelGroup>
                     <h:panelGrid columns="3">
                         <h:outputLabel value="Espaço: "/>              
@@ -27,7 +31,7 @@
                     </h:panelGrid>
                 </h:panelGroup>
 
-                <h3>
+                <h3 style="text-align: center">
                     <h:outputText value="Espaços" rendered="#{!modelMB.espacos.isEmpty()}" />
                 </h3>
 

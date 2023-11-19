@@ -3,6 +3,8 @@ package br.edu.ifpr.irati.ads.util;
 import br.edu.ifpr.irati.ads.dao.Dao;
 import br.edu.ifpr.irati.ads.dao.GenericDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
+import br.edu.ifpr.irati.ads.model.DadosPessoais;
+import br.edu.ifpr.irati.ads.model.Endereco;
 import br.edu.ifpr.irati.ads.model.Espaco;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.model.Vigilante;
@@ -21,12 +23,36 @@ public class Script {
         Dao<Vigilante> dao = new GenericDAO<>(Vigilante.class, session);
 
         Vigilante v1 = new Vigilante();
-        v1.setNome("Zé da Villa");
-        v1.setCpf("00011122233");
+        DadosPessoais dp = new DadosPessoais();
+        dp.setCpf("00011122233");
+        dp.setNome("Zé da Villa");
+        dp.setEmail("zedavilla@gmail.com");
+        dp.setTelefone("42999859898");
+        Endereco e = new Endereco();
+        e.setUf("PR");
+        e.setCidade("Irati");
+        e.setBairro("Rio");
+        e.setCep("84500000");
+        e.setNumero("416");
+        e.setRua("KIa");
+        dp.setEndereco(e);
+        v1.setDadosPessoais(dp);
 
         Vigilante v2 = new Vigilante();
-        v2.setNome("Zé da Goiaba");
-        v2.setCpf("99988877744");
+        DadosPessoais dp2 = new DadosPessoais();
+        dp2.setCpf("99988877744");
+        dp2.setNome("Zé da Goiaba");
+        dp2.setEmail("zedavilla@gmail.com");
+        dp2.setTelefone("42999859898");
+        Endereco e2 = new Endereco();
+        e2.setUf("PR");
+        e2.setCidade("Irati");
+        e2.setBairro("Rio");
+        e2.setCep("84500000");
+        e2.setNumero("416");
+        e2.setRua("KIa");
+        dp2.setEndereco(e2);
+        v2.setDadosPessoais(dp2);
 
         try {
             dao.salvar(v1);
