@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Emprestimo</title>
+        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <script>
+            $(document).ready(function () {
+                var $campoData = $("#dataIni");
+                $campoData.mask('00/00/0000 00:00', {reverse: false});
+
+                var $campoData = $("#dataFim");
+                $campoData.mask('00/00/0000 00:00', {reverse: false});
+            });
+        </script>
+    </h:head>
+    <h:body onload="#{flash.script}">
+        <h:form>
+            <h:commandLink action="faces/index.xhtml">
+                <button class="ui-button ui-widget ui-corner-all">
+                    Voltar
+                </button>
+            </h:commandLink>
+
+            <div style="margin: 2% 4%; border-style: solid">
+                <div style="margin: 0 auto;">
+                    <h2 style="text-align: center">Empréstimo de Laboratório</h2>
+                    <h:panelGroup>
+                        <h:panelGrid columns="3">
+                            <h:outputText value="Servidor (SIAPE): "/>
+                            <h:inputText id="siape_emp" value="#{emprestimoMB.emprestimo.servidor.siape}" size="50"/>
+                            <h:message for="siape_emp" />
+
+                            <h:outputText value="Servidor (6 Primeiros Dígitos CPF): "/>
+                            <h:inputText id="cpf_emp" value="#{emprestimoMB.sixCPF}" size="50"/>
+                            <h:message for="cpf_emp" />
+                        </h:panelGrid>
+                        
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Laboratório: "/>
+                            <h:selectOneMenu id="labs" value="#{emprestimoMB.espaco}" style="width: 100%" converter="espacoConverter">
+                                <f:selectItems value="#{emprestimoMB.espacos}" var="esp" itemLabel="#{esp}" itemValue="#{esp}" />
+                            </h:selectOneMenu>
+
+                            <h:outputText value="Horário Inicio: " />
+                            <h:inputText value="#{emprestimoMB.dataInicio}" size="50" id="dataIni">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                            </h:inputText>
+
+                            <h:outputText value="Horário Fim: " />
+                            <h:inputText value="#{emprestimoMB.dataFim}" size="50" id="dataFim">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                            </h:inputText>
+
+                            <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.configurarValores}" value="Salvar" />
+                            <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.limparTela}" value="Cancelar" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <div id="modal" style="display: #{emprestimoMB.exibirModal ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Confirmar Empréstimo?" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Servidor: "/>
+                            <h:inputText value="#{emprestimoMB.emprestimo.servidor.nome}" size="40"/>
+                            <h:outputText value="Espaço: "/>
+                            <h:inputText value="#{emprestimoMB.emprestimo.espaco.nome}" size="40"/>
+                            <h:outputText value="Data início: "/>
+                            <h:inputText value="#{emprestimoMB.emprestimo.dataInicio}" size="40">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                            </h:inputText>
+                            <h:outputText value="Data Fim: "/>
+                            <h:inputText value="#{emprestimoMB.emprestimo.dataFim}" size="40">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                            </h:inputText>
+                            <h:commandButton value="Confirmar" action="#{emprestimoMB.salvar}" />
+                            <h:commandButton value="Cancelar" action="#{emprestimoMB.cancelarEmprestimo}" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
