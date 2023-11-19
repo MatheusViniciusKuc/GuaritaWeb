@@ -1,18 +1,19 @@
 package br.edu.ifpr.irati.ads.mb;
 
-import br.edu.ifpr.irati.ads.dao.Dao;
+import br.edu.ifpr.irati.ads.dao.EmprestimoDAO;
 import br.edu.ifpr.irati.ads.dao.EspacoDAO;
-import br.edu.ifpr.irati.ads.dao.GenericDAO;
 import br.edu.ifpr.irati.ads.dao.ServidorDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
+import br.edu.ifpr.irati.ads.model.Horario;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
 import jakarta.persistence.NoResultException;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,14 +27,14 @@ public class EmprestimoMB implements Serializable {
 
     private Session session;
     private EspacoDAO espDAO;
+    private EmprestimoDAO empDAO;
     private List<Espaco> espacos;
     private Espaco espaco;
     private Emprestimo emprestimo;
     private String sixCPF;
     private Boolean exibirModal;
     private List<Emprestimo> emprestimos;
-    private Date dataInicio;
-    private Date dataFim;
+    private Horario horario;
 
     public EmprestimoMB() {
         configurarConfiguracoesIniciais();
@@ -42,7 +43,7 @@ public class EmprestimoMB implements Serializable {
     private void configurarConfiguracoesIniciais() {
         session = HibernateUtil.getSessionFactory().openSession();
         try {
-            Dao<Emprestimo> empDAO = new GenericDAO<>(Emprestimo.class, session);
+            empDAO = new EmprestimoDAO(session);
             espDAO = new EspacoDAO(session);
             espacos = espDAO.buscarEspacosDisponiveis();
             emprestimos = empDAO.buscarTodos();
@@ -50,32 +51,30 @@ public class EmprestimoMB implements Serializable {
             espacos = new ArrayList<>();
             emprestimos = new ArrayList<>();
         }
-        dataInicio = new Date();
-        dataFim = new Date();
         emprestimo = new Emprestimo();
         exibirModal = false;
+        horario = new Horario();
     }
 
     public void configurarValores() {
         try {
-            ServidorDAO servDAO = new ServidorDAO(session);
-            Servidor s = null;
+            Servidor s = localizarServidor();
 
-            if (!emprestimo.getServidor().getSiape().isBlank()) {
-                s = servDAO.buscarPorSIAPE(emprestimo.getServidor().getSiape());
-            } else if (!sixCPF.isBlank()) {
-                s = servDAO.buscarPorCPF(sixCPF);
-            } else {
-                throw new ValidacaoCampoException("Um desses campos precisa estar preenchido: Siape ou CPF!");
-            }
+            Date dataInicio = Util.configurarDate(horario.getDataInicio(),
+                    horario.getHorarioSelecionadoIni());
+            Date dataFim = Util.configurarDate(horario.getDataFinal(),
+                    horario.getHorarioSelecionadoFim());
 
             if (dataInicio.compareTo(dataFim) >= 0) {
                 throw new ValidacaoCampoException("A Data de Fim precisa ser superior a Data de Início");
             }
 
+            if (!empDAO.isDisponivelParaEmprestimo(dataInicio, dataFim, espaco)) {
+                throw new ValidacaoCampoException("Horário já está ocupado.");
+            }
+
             emprestimo.setDataInicio(dataInicio);
             emprestimo.setDataFim(dataFim);
-
             emprestimo.setServidor(s);
             emprestimo.setEspaco(espaco);
 
@@ -84,14 +83,31 @@ public class EmprestimoMB implements Serializable {
             Util.mensagemErro("Servidor não encontrado!", "siape_emp");
         } catch (ValidacaoCampoException ex) {
             Util.mensagemErro(ex.getMessage(), "siape_emp");
+        } catch (ParseException pe) {
+            Util.mensagemErro("Problema ao converter a Data, se o problema "
+                    + "persistir entre em contato.", "siape_emp");
         }
+    }
+
+    private Servidor localizarServidor() throws ValidacaoCampoException, PersistenceException {
+        ServidorDAO servDAO = new ServidorDAO(session);
+        Servidor s = null;
+
+        if (!emprestimo.getServidor().getSiape().isBlank()) {
+            s = servDAO.buscarPorSIAPE(emprestimo.getServidor().getSiape());
+        } else if (!sixCPF.isBlank()) {
+            s = servDAO.buscarPorCPF(sixCPF);
+        } else {
+            throw new ValidacaoCampoException("Um desses campos precisa estar preenchido: Siape ou CPF!");
+        }
+
+        return s;
     }
 
     public String salvar() {
         try {
-            Dao<Emprestimo> emprestimoDAO = new GenericDAO(Emprestimo.class, session);
             this.exibirModal = false;
-            emprestimoDAO.salvar(emprestimo);
+            empDAO.salvar(emprestimo);
             limparTela();
             return "index.xhtml";
         } catch (PersistenceException e) {
@@ -104,8 +120,7 @@ public class EmprestimoMB implements Serializable {
         emprestimo = new Emprestimo();
         this.exibirModal = false;
         this.sixCPF = "";
-        this.dataInicio = new Date();
-        this.dataFim = new Date();
+        this.horario = new Horario();
     }
 
     public void cancelarEmprestimo() {
@@ -151,20 +166,12 @@ public class EmprestimoMB implements Serializable {
         return emprestimos;
     }
 
-    public void setDataInicio(Date dataInicio) {
-        this.dataInicio = dataInicio;
+    public void setHorario(Horario horario) {
+        this.horario = horario;
     }
 
-    public Date getDataInicio() {
-        return dataInicio;
-    }
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
-    }
-
-    public Date getDataFim() {
-        return dataFim;
+    public Horario getHorario() {
+        return horario;
     }
 
 }

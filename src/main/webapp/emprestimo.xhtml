@@ -36,29 +36,41 @@
                     <h:panelGroup>
                         <h:panelGrid columns="3">
                             <h:outputText value="Servidor (SIAPE): "/>
-                            <h:inputText id="siape_emp" value="#{emprestimoMB.emprestimo.servidor.siape}" size="50"/>
+                            <h:inputText id="siape_emp" value="#{emprestimoMB.emprestimo.servidor.siape}" size="30"/>
                             <h:message for="siape_emp" />
 
                             <h:outputText value="Servidor (6 Primeiros Dígitos CPF): "/>
-                            <h:inputText id="cpf_emp" value="#{emprestimoMB.sixCPF}" size="50"/>
+                            <h:inputText id="cpf_emp" value="#{emprestimoMB.sixCPF}" size="30"/>
                             <h:message for="cpf_emp" />
                         </h:panelGrid>
-                        
+
                         <h:panelGrid columns="2">
                             <h:outputText value="Laboratório: "/>
-                            <h:selectOneMenu id="labs" value="#{emprestimoMB.espaco}" style="width: 100%" converter="espacoConverter">
+                            <h:selectOneMenu id="labs" value="#{emprestimoMB.espaco}" style="width: 110%" converter="espacoConverter">
                                 <f:selectItems value="#{emprestimoMB.espacos}" var="esp" itemLabel="#{esp}" itemValue="#{esp}" />
                             </h:selectOneMenu>
+                        </h:panelGrid>
 
-                            <h:outputText value="Horário Inicio: " />
-                            <h:inputText value="#{emprestimoMB.dataInicio}" size="50" id="dataIni">
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                        <h:panelGrid columns="4">
+                            <h:outputText value="Data Inicio: " />
+                            <h:inputText value="#{emprestimoMB.horario.dataInicio}" size="20" id="dataIni">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
 
-                            <h:outputText value="Horário Fim: " />
-                            <h:inputText value="#{emprestimoMB.dataFim}" size="50" id="dataFim">
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
+                            <h:outputText value="Horário Inicio: "/>
+                            <h:selectOneMenu id="horaIni" value="#{emprestimoMB.horario.horarioSelecionadoIni}" style="width: 100%" >
+                                <f:selectItems value="#{emprestimoMB.horario.horariosInicial}" var="horaIni" itemLabel="#{horaIni}" itemValue="#{horaIni}" />
+                            </h:selectOneMenu>
+
+                            <h:outputText value="Data Fim: " />
+                            <h:inputText value="#{emprestimoMB.horario.dataFinal}" size="20" id="dataFim">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
+
+                            <h:outputText value="Horário Final: "/>
+                            <h:selectOneMenu id="horaFim" value="#{emprestimoMB.horario.horarioSelecionadoFim}" style="width: 100%" >
+                                <f:selectItems value="#{emprestimoMB.horario.horariosFim}" var="horaFim" itemLabel="#{horaFim}" itemValue="#{horaFim}" />
+                            </h:selectOneMenu>
 
                             <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.configurarValores}" value="Salvar" />
                             <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.limparTela}" value="Cancelar" />
@@ -75,17 +87,21 @@
                     <h:panelGroup>
                         <h:panelGrid columns="2">
                             <h:outputText value="Servidor: "/>
-                            <h:inputText value="#{emprestimoMB.emprestimo.servidor.nome}" size="40"/>
+                            <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.servidor.dadosPessoais.nome}" size="40"/>
+                            
                             <h:outputText value="Espaço: "/>
-                            <h:inputText value="#{emprestimoMB.emprestimo.espaco.nome}" size="40"/>
+                            <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.espaco.nome}" size="40"/>
+                            
                             <h:outputText value="Data início: "/>
-                            <h:inputText value="#{emprestimoMB.emprestimo.dataInicio}" size="40">
+                            <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.dataInicio}" size="40">
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
+                            
                             <h:outputText value="Data Fim: "/>
-                            <h:inputText value="#{emprestimoMB.emprestimo.dataFim}" size="40">
+                            <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.dataFim}" size="40">
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
+                            
                             <h:commandButton value="Confirmar" action="#{emprestimoMB.salvar}" />
                             <h:commandButton value="Cancelar" action="#{emprestimoMB.cancelarEmprestimo}" />
                         </h:panelGrid>

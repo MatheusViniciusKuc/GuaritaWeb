@@ -59,7 +59,7 @@
                             </h3>
                             <h:panelGrid columns="2">
                                 <h:outputText value="Servidor: "/>
-                                <h:inputText value="#{emp.servidor.nome}" disabled="true" size="30"/>
+                                <h:inputText value="#{emp.servidor.dadosPessoais.nome}" disabled="true" size="30"/>
                                 <h:outputText value="Data/Horário Início do Empréstimo: "/>
                                 <h:inputText value="#{emp.dataInicio}" disabled="true" size="30">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>

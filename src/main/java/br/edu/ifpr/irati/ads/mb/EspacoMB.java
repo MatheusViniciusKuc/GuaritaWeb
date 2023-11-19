@@ -19,7 +19,7 @@ import org.hibernate.Session;
 
 @ManagedBean
 @SessionScoped
-public class ModelMB {
+public class EspacoMB {
 
     private Session session;
     private Espaco espaco;
@@ -35,7 +35,7 @@ public class ModelMB {
     private Boolean perdeuChave;
     private Boolean exibirOcorrencias;
 
-    public ModelMB() {
+    public EspacoMB() {
         configurarConfiguracoesIniciais();
     }
 
