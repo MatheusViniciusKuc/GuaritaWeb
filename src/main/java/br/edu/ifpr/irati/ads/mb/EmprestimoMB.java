@@ -113,9 +113,10 @@ public class EmprestimoMB implements Serializable {
     }
 
     public String getSixCPF() {
-        return emprestimo.getServidor().getCpf().isBlank()
+        return emprestimo.getServidor().getDadosPessoais().getCpf().isBlank()
                 ? ""
-                : emprestimo.getServidor().getCpf().substring(0, 6);
+                : emprestimo.getServidor().getDadosPessoais()
+                        .getCpf().substring(0, 6);
     }
 
     public void setSixCPF(String sixCPF) {

@@ -3,6 +3,7 @@ package br.edu.ifpr.irati.ads.dao;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import jakarta.persistence.Query;
+import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -31,6 +32,18 @@ public class ServidorDAO extends GenericDAO<Servidor> {
             query.setParameter("cpf", cpf);
             Servidor s = (Servidor) query.getSingleResult();
             return s;
+        } catch (HibernateException | NullPointerException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+    
+    public List<Servidor> buscarTodosAtivos() throws PersistenceException {
+        try {
+            String hql = "FROM Servidor WHERE excluido = :excluido";
+            Query query = session.createQuery(hql);
+            query.setParameter("excluido", false);
+
+            return query.getResultList();
         } catch (HibernateException | NullPointerException e) {
             throw new PersistenceException(e.getMessage());
         }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core">
+    <head>
+        <title>Vigilantes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <h:body>
+        <h:form>
+            <h:commandLink action="faces/index.xhtml">
+                <button class="ui-button ui-widget ui-corner-all">
+                    Voltar
+                </button>
+            </h:commandLink>
+
+            <h:message for="nome_servidor" />
+
+            <div>
+                <h2>
+                    <h:outputText value="#{servidorMB.servidor.id > 0 ? 'Alterar:' : 'Cadastrar:'}" />
+                </h2>
+
+                <h:panelGroup>
+                    <h:panelGrid columns="6">
+                        <h:outputLabel value="Nome: "/>              
+                        <h:inputText id="nome_servidor" value="#{servidorMB.servidor.dadosPessoais.nome}"/>
+
+                        <h:outputLabel value="Telefone: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.telefone}"/>
+
+                        <h:outputLabel value="Bairro: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.bairro}"/>
+
+                        <h:outputLabel value="Siape: "/>              
+                        <h:inputText value="#{servidorMB.servidor.siape}"/>
+
+                        <h:outputLabel value="UF: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.uf}"/>
+
+                        <h:outputLabel value="Rua: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.rua}"/>
+
+                        <h:outputLabel value="CPF: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.cpf}"/>
+
+                        <h:outputLabel value="Cidade: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.cidade}"/>
+
+                        <h:outputLabel value="Número: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.numero}"/>
+
+                        <h:outputLabel value="E-mail: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.email}"/>
+
+                        <h:outputLabel value="CEP: "/>              
+                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.cep}"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="2">
+                        <h:commandButton action="#{servidorMB.salvarServidor}" value="Salvar"/>  
+                        <h:commandButton action="#{servidorMB.cancelarServidor}" value="Cancelar"/>  
+                    </h:panelGrid>
+                </h:panelGroup>
+
+                <h3 style="text-align: center">
+                    <h:outputText value="Servidores" rendered="#{!servidorMB.servidores.isEmpty()}" />
+                </h3>
+
+                <h:panelGroup style="text-align: center" rendered="#{!servidorMB.servidores.isEmpty()}">
+                    <h:dataTable var="serv" value="#{servidorMB.servidores}" border="1" width="100" style="width: 100%">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nome"/>
+                            </f:facet>
+                            <h:outputText value="#{serv.dadosPessoais.nome}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="SIAPE"/>
+                            </f:facet>
+                            <h:outputText value="#{serv.siape}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="E-mail"/>
+                            </f:facet>
+                            <h:outputText value="#{serv.dadosPessoais.email}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Telefone"/>
+                            </f:facet>
+                            <h:outputText value="#{serv.dadosPessoais.telefone}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Endereço"/>
+                            </f:facet>
+                            <h:outputText value="#{serv.dadosPessoais.endereco}" />
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Alterar"/>
+                            </f:facet>
+                            <h:commandButton action="#{servidorMB.alterarServidor(serv)}" value="Alterar"/>  
+                        </h:column>  
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Excluir"/>
+                            </f:facet>
+                            <h:commandButton action="#{servidorMB.abrirModalExcluir(serv)}" value="Excluir"/>  
+                        </h:column>  
+                    </h:dataTable>
+                </h:panelGroup>
+            </div> 
+
+            <div style="display: #{servidorMB.exibirModalExcluir ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Confirmar Exclusão?" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:commandButton value="Confirmar" action="#{servidorMB.excluirServidor}" />
+                            <h:commandButton value="Cancelar" action="#{servidorMB.cancelarServidor}" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
