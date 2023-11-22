@@ -66,19 +66,43 @@ public class Script {
         Dao<Servidor> dao = new GenericDAO<>(Servidor.class, session);
 
         Servidor p1 = new Servidor();
-        p1.setNome("Valter");
         p1.setSiape("A1520");
+        DadosPessoais dp = new DadosPessoais();
+        dp.setCpf("12345678911");
+        dp.setNome("Valter");
+        dp.setEmail("Valter@gmail.com");
+        dp.setTelefone("42999859845");
+        Endereco e = new Endereco();
+        e.setUf("PR");
+        e.setCidade("Irati");
+        e.setBairro("Rio");
+        e.setCep("84500000");
+        e.setNumero("416");
+        e.setRua("KIa");
+        dp.setEndereco(e);
+        p1.setDadosPessoais(dp);
+        
+        
         Servidor p2 = new Servidor();
-        p2.setNome("Hernani");
         p2.setSiape("Y56FA");
-        Servidor p3 = new Servidor();
-        p3.setNome("Thalita");
-        p3.setSiape("BV514");
+        DadosPessoais dp2 = new DadosPessoais();
+        dp2.setCpf("98758926562");
+        dp2.setNome("Hernani");
+        dp2.setEmail("Hernani@gmail.com");
+        dp2.setTelefone("42999859831");
+        Endereco e2 = new Endereco();
+        e2.setUf("PR");
+        e2.setCidade("Irati");
+        e2.setBairro("Rio");
+        e2.setCep("84500000");
+        e2.setNumero("416");
+        e2.setRua("KIa");
+        dp2.setEndereco(e2);
+        p2.setDadosPessoais(dp2);
 
         try {
             dao.salvar(p1);
             dao.salvar(p2);
-            dao.salvar(p3);
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }

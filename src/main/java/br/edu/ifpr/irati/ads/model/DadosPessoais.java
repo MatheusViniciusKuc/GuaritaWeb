@@ -2,14 +2,18 @@ package br.edu.ifpr.irati.ads.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
 
 @Embeddable
 public class DadosPessoais {
 
     private String telefone;
+    @NotBlank
     private String email;
+    @NotBlank
     @Column(name = "cpf", nullable = false)
     private String cpf;
+    @NotBlank
     @Column(name = "nome", nullable = false)
     private String nome;
     private Endereco endereco;

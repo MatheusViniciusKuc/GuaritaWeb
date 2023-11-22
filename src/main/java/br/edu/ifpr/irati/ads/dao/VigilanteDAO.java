@@ -15,16 +15,18 @@ public class VigilanteDAO extends GenericDAO<Vigilante> {
 
     public Vigilante buscarPorCPF(String cpf) throws PersistenceException {
         try {
-            String hql = "FROM Vigilante WHERE SUBSTRING(cpf, 1, 6) = :cpf";
+            String hql = "FROM Vigilante v WHERE SUBSTRING(v.dadosPessoais.cpf, 1, 6) = :cpf AND v.excluido = :excluido";
+
             Query query = session.createQuery(hql);
             query.setParameter("cpf", cpf);
+            query.setParameter("excluido", false);
 
             return (Vigilante) query.getSingleResult();
         } catch (HibernateException | NullPointerException e) {
             throw new PersistenceException(e.getMessage());
         }
     }
-    
+
     public List<Vigilante> buscarTodosAtivos() throws PersistenceException {
         try {
             String hql = "FROM Vigilante WHERE excluido = :excluido";
