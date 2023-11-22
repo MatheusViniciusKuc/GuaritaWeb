@@ -113,7 +113,10 @@
                             <f:facet name="header">
                                 <h:outputText value="Servidor / Vigilante"/>
                             </f:facet>
-                            <h:outputText value="#{oco.servidor != null ? oco.servidor.nome : oco.vigilante.nome}" />
+                            <h:outputText 
+                                value="#{oco.servidor != null 
+                                         ? oco.servidor.dadosPessoais.nome 
+                                         : oco.vigilante.dadosPessoais.nome}" />
                         </h:column>  
 
                         <h:column>
