@@ -1,5 +1,6 @@
 package br.edu.ifpr.irati.ads.util;
 
+import br.edu.ifpr.irati.ads.model.Modal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,6 +13,14 @@ public class Util {
     public static void mensagemErro(String mensagem, String campo) {
         FacesMessage mensagemFM = new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem, null);
         FacesContext.getCurrentInstance().addMessage(campo, mensagemFM);
+    }
+
+    public static Modal buscarModal(String modalString) {
+        try {
+            return Modal.valueOf(modalString);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static Date configurarDate(Date date, String horario) throws ParseException {

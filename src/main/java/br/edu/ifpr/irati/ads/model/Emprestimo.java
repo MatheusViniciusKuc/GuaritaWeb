@@ -33,6 +33,7 @@ public class Emprestimo implements Serializable {
     private Ocorrencia ocorrencia;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private String concluidoPor;
 
     public Emprestimo() {
         this.id = 0;
@@ -108,6 +109,14 @@ public class Emprestimo implements Serializable {
 
     public void setEspaco(Espaco espaco) {
         this.espaco = espaco;
+    }
+
+    public void setConcluidoPor(String concluidoPor) {
+        this.concluidoPor = concluidoPor;
+    }
+
+    public String getConcluidoPor() {
+        return concluidoPor;
     }
 
 }

@@ -51,7 +51,7 @@
                         Emprestar Espaço
                     </button>
                 </h:commandLink>
-                <ui:repeat value="#{emprestimoMB.emprestimos}" var="emp">
+                <ui:repeat value="#{principalMB.emprestimos}" var="emp">
                     <div style="border-style: solid; margin-top: 3px; padding: 2px;">
                         <h:panelGroup>
                             <h3>
@@ -60,39 +60,156 @@
                             <h:panelGrid columns="2">
                                 <h:outputText value="Servidor: "/>
                                 <h:inputText value="#{emp.servidor.dadosPessoais.nome}" disabled="true" size="30"/>
+
                                 <h:outputText value="Data/Horário Início do Empréstimo: "/>
                                 <h:inputText value="#{emp.dataInicio}" disabled="true" size="30">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                                 </h:inputText>
+
                                 <h:outputText value="Data/Horário Fim do Empréstimo: "/>
                                 <h:inputText value="#{emp.dataFim}" disabled="true" size="30">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                                 </h:inputText>
+
                                 <h:outputText value="STATUS: "/>
                                 <h:inputText value="#{emp.status}" disabled="true" size="30"/>
+
+                                <h:outputText value="Concluído Por: " rendered="#{emp.concluidoPor != null}"/>
+                                <h:inputText 
+                                    value="#{emp.concluidoPor}" 
+                                    disabled="true" 
+                                    size="30"
+                                    rendered="#{emp.concluidoPor != null}"/>
                             </h:panelGrid>
                         </h:panelGroup>
                         <h:panelGroup>
-                            <h:panelGrid columns="3">
-                                <h:commandLink action="exemplo1/exemplo1.xhtml">
-                                    <button class="ui-button ui-widget ui-corner-all">
-                                        Entrega da Chave - Professor
-                                    </button>
-                                </h:commandLink>
-                                <h:commandLink action="exemplo1/exemplo1.xhtml">
-                                    <button class="ui-button ui-widget ui-corner-all">
-                                        Entrega da Chave - Vigilante
-                                    </button>
-                                </h:commandLink>
-                                <h:commandLink action="exemplo1/exemplo1.xhtml">
-                                    <button class="ui-button ui-widget ui-corner-all">
-                                        Ocorrência
-                                    </button>
-                                </h:commandLink>
+                            <h:panelGrid columns="4">
+                                <h:commandButton 
+                                    action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_SERVIDOR')}" 
+                                    value="Entrega da Chave - Professor"
+                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+
+                                <h:commandButton 
+                                    action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_VIGILANTE')}" 
+                                    value="Entrega da Chave - Vigilante"
+                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+
+                                <h:commandButton 
+                                    action="#{principalMB.exibirModal(emp, 'REGISTRAR_OCORRENCIA')}" 
+                                    value="Ocorrência"
+                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+
+                                <h:commandButton 
+                                    action="#{principalMB.exibirModal(emp, 'CANCELAR_EMPRESTIMO')}" 
+                                    value="Cancelar Empréstimo"
+                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
                             </h:panelGrid>
                         </h:panelGroup>
                     </div>
                 </ui:repeat>
+            </div>
+
+            <div style="display: #{principalMB.exibirModalOcorrencia ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Registrar Ocorrência" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Mensagem: "/>
+                            <h:inputText value="#{principalMB.ocorrencia.ocorrido}" />
+
+                            <h:outputText value="Vigilante (Digite seus 6 primeiros dígitos do CPF): "/>
+                            <h:inputText id="principal_ocorrencia" value="#{principalMB.cpf}" size="6"/>
+
+                            <h:outputText value="Servidor (Digite seu SIAPE): "/>
+                            <h:inputText value="#{principalMB.siape}" size="14"/>
+
+                            <h:outputLabel value="Perdeu a chave?" />
+                            <h:selectBooleanCheckbox value="#{principalMB.perdeuChave}" />
+
+                            <h:commandButton value="Confirmar" action="#{principalMB.registrarOcorrencia}" />
+                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+
+                            <h:message for="principal_ocorrencia" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <div style="display: #{principalMB.exibirModalCancelar ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Cancelar Emprestimo" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Servidor "/>
+                            <h:inputText 
+                                id="servidor_nome_principal_cancelar"
+                                disabled="true" 
+                                value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+
+                            <h:outputText value="Digite seu SIAPE para confirmar: "/>
+                            <h:inputText value="#{principalMB.siape}" size="14"/>
+
+                            <h:commandButton value="Confirmar" action="#{principalMB.cancelarEmprestimo}" />
+                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+
+                            <h:message for="servidor_nome_principal_cancelar" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <div style="display: #{principalMB.exibirModalVigilante ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Finalizar Empréstimo - Vigilante" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Servidor Responsável"/>
+                            <h:inputText 
+                                id="servidor_nome_principal_concluirV"
+                                disabled="true" 
+                                value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+
+                            <h:outputText value="Digite seus 6 primeiros dígitos do CPF para confirmar: "/>
+                            <h:inputText value="#{principalMB.cpfConfirmarSaida}" size="6"/>
+
+                            <h:commandButton value="Confirmar" action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+
+                            <h:message for="servidor_nome_principal_concluirV" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <div style="display: #{principalMB.exibirModalServidor ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                    <h:outputText value="Finalizar Empréstimo - Servidor" />
+                    <br />
+                    <br />
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Servidor Responsável"/>
+                            <h:inputText 
+                                id="servidor_nome_principal_concluir"
+                                disabled="true" 
+                                value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+
+                            <h:outputText value="Digite seu SIAPE para confirmar: "/>
+                            <h:inputText value="#{principalMB.siape}" size="14"/>
+
+                            <h:commandButton value="Confirmar" action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+
+                            <h:message for="servidor_nome_principal_concluir" />
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
             </div>
         </h:form>
     </h:body>

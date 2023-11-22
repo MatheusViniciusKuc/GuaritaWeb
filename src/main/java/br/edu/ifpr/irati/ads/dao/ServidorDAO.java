@@ -36,8 +36,10 @@ public class ServidorDAO extends GenericDAO<Servidor> {
             query.setParameter("excluido", false);
 
             return (Servidor) query.getSingleResult();
-        } catch (HibernateException | NullPointerException e) {
+        } catch (HibernateException e) {
             throw new PersistenceException(e.getMessage());
+        } catch (NullPointerException npe) {
+            return null;
         }
     }
 
