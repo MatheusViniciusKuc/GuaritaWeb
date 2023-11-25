@@ -1,10 +1,11 @@
 package br.edu.ifpr.irati.ads.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Horario {
+public class Horario implements Serializable{
 
     private Date dataInicio;
     private Date dataFinal;
