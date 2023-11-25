@@ -6,6 +6,7 @@ import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
@@ -14,7 +15,7 @@ import org.hibernate.Session;
 
 @ManagedBean
 @SessionScoped
-public class ServidorMB {
+public class ServidorMB implements Serializable{
 
     private Session session;
     private ServidorDAO servidorDAO;

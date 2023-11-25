@@ -18,11 +18,24 @@
                 <h1 style="text-align: center">Guarita Web</h1>
             </div>
 
+            <div align="right">
+                &nbsp;&nbsp;
+                <h:commandLink action="#{idiomaMB.ingles}"                                        
+                               immediate="true">
+                    <h:graphicImage value="/imagens/us_32.png" width="24"/>
+                </h:commandLink>
+                &nbsp;&nbsp;
+                <h:commandLink action="#{idiomaMB.portugues}"
+                               immediate="true">
+                    <h:graphicImage value="/imagens/brasil_32.png" width="24"/>
+                </h:commandLink>
+            </div>
+
             <div style="margin: 10px">
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
                     <h:commandLink action="servidor.xhtml">
                         <button class="ui-button ui-widget ui-corner-all">
-                            Cadastrar Servidor / Listar Servidores
+                            #{mensagem.Cadastrar} #{mensagem.Servidor} / #{mensagem.Listar} #{mensagem.Servidores}
                         </button>
                     </h:commandLink>
                 </div>
@@ -30,7 +43,7 @@
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
                     <h:commandLink action="espaco.xhtml">
                         <button class="ui-button ui-widget ui-corner-all">
-                            Cadastrar Espaço / Listar Espaços
+                            #{mensagem.Cadastrar} #{mensagem.Espaco} / #{mensagem.Listar} #{mensagem.Espaco}s
                         </button>
                     </h:commandLink>
                 </div>
@@ -38,43 +51,50 @@
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
                     <h:commandLink action="vigilante.xhtml">
                         <button class="ui-button ui-widget ui-corner-all">
-                            Cadastrar Vigilante / Listar Vigilantes
+                            #{mensagem.Cadastrar} #{mensagem.Vigilante} / #{mensagem.Listar} #{mensagem.Vigilante}s
                         </button>
                     </h:commandLink>
                 </div>
             </div>
 
             <div style="width: 1000px; margin: 0 auto;">
-                <h2 style="margin-bottom: 6px; text-align: center">Espaços Emprestados / Emprestar Espaços</h2>
+                <h2 style="margin-bottom: 6px; text-align: center">#{mensagem.Espaco}s #{mensagem.Emprestados} / #{mensagem.Emprestar} #{mensagem.Espaco}s</h2>
                 <h:commandLink action="emprestimo.xhtml">
                     <button class="ui-button ui-widget ui-corner-all">
-                        Emprestar Espaço
+                        #{mensagem.Emprestar} #{mensagem.Espaco}
                     </button>
                 </h:commandLink>
+
+                <h:commandLink style="padding-left: 3px" action="Relatorios/emprestimo.xhtml">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        #{mensagem.Relatorio}
+                    </button>
+                </h:commandLink>
+
                 <ui:repeat value="#{principalMB.emprestimos}" var="emp">
                     <div style="border-style: solid; margin-top: 3px; padding: 2px;">
                         <h:panelGroup>
                             <h3>
-                                <h:outputText value="Espaço: #{emp.espaco.nome}" />
+                                <h:outputText value="#{mensagem.Espaco}: #{emp.espaco.nome}" />
                             </h3>
                             <h:panelGrid columns="2">
-                                <h:outputText value="Servidor: "/>
+                                <h:outputText value="#{mensagem.Servidor}: "/>
                                 <h:inputText value="#{emp.servidor.dadosPessoais.nome}" disabled="true" size="30"/>
 
-                                <h:outputText value="Data/Horário Início do Empréstimo: "/>
+                                <h:outputText value="#{mensagem.DataHorarioInicioDoEmprestimo}: "/>
                                 <h:inputText value="#{emp.dataInicio}" disabled="true" size="30">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                                 </h:inputText>
 
-                                <h:outputText value="Data/Horário Fim do Empréstimo: "/>
+                                <h:outputText value="#{mensagem.DataHorarioFimDoEmprestimo}: "/>
                                 <h:inputText value="#{emp.dataFim}" disabled="true" size="30">
                                     <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                                 </h:inputText>
 
-                                <h:outputText value="STATUS: "/>
+                                <h:outputText value="Status: "/>
                                 <h:inputText value="#{emp.status}" disabled="true" size="30"/>
 
-                                <h:outputText value="Concluído Por: " rendered="#{emp.concluidoPor != null}"/>
+                                <h:outputText value="#{mensagem.ConcluidoPor}: " rendered="#{emp.concluidoPor != null}"/>
                                 <h:inputText 
                                     value="#{emp.concluidoPor}" 
                                     disabled="true" 
@@ -86,22 +106,22 @@
                             <h:panelGrid columns="4">
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_SERVIDOR')}" 
-                                    value="Entrega da Chave - Professor"
+                                    value="#{mensagem.EntregaDaChave} - #{mensagem.Servidor}"
                                     disabled="#{principalMB.desativarBotoes(emp)}"/>
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_VIGILANTE')}" 
-                                    value="Entrega da Chave - Vigilante"
+                                    value="#{mensagem.EntregaDaChave} - #{mensagem.Vigilante}"
                                     disabled="#{principalMB.desativarBotoes(emp)}"/>
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'REGISTRAR_OCORRENCIA')}" 
-                                    value="Ocorrência"
+                                    value="#{mensagem.Ocorrencia}"
                                     disabled="#{principalMB.desativarBotoes(emp)}"/>
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'CANCELAR_EMPRESTIMO')}" 
-                                    value="Cancelar Empréstimo"
+                                    value="#{mensagem.Cancelar} #{mensagem.Emprestimo}"
                                     disabled="#{principalMB.desativarBotoes(emp)}"/>
                             </h:panelGrid>
                         </h:panelGroup>
@@ -111,25 +131,25 @@
 
             <div style="display: #{principalMB.exibirModalOcorrencia ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Registrar Ocorrência" />
+                    <h:outputText value="#{mensagem.Registrar} #{mensagem.Ocorrencia}" />
                     <br />
                     <br />
                     <h:panelGroup>
                         <h:panelGrid columns="2">
-                            <h:outputText value="Mensagem: "/>
+                            <h:outputText value="#{mensagem.Mensagem}: "/>
                             <h:inputText value="#{principalMB.ocorrencia.ocorrido}" />
 
-                            <h:outputText value="Vigilante (Digite seus 6 primeiros dígitos do CPF): "/>
+                            <h:outputText value="#{mensagem.Vigilante} (#{mensagem.DigiteSeus6PrimeirosDigitosDoCPF}): "/>
                             <h:inputText id="principal_ocorrencia" value="#{principalMB.cpf}" size="6"/>
 
-                            <h:outputText value="Servidor (Digite seu SIAPE): "/>
+                            <h:outputText value="#{mensagem.Servidor} (SIAPE): "/>
                             <h:inputText value="#{principalMB.siape}" size="14"/>
 
-                            <h:outputLabel value="Perdeu a chave?" />
+                            <h:outputLabel value="#{mensagem.PerdeuAChave}?" />
                             <h:selectBooleanCheckbox value="#{principalMB.perdeuChave}" />
 
-                            <h:commandButton value="Confirmar" action="#{principalMB.registrarOcorrencia}" />
-                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.registrarOcorrencia}" />
+                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
 
                             <h:message for="principal_ocorrencia" />
                         </h:panelGrid>
@@ -139,22 +159,22 @@
 
             <div style="display: #{principalMB.exibirModalCancelar ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Cancelar Emprestimo" />
+                    <h:outputText value="#{mensagem.Cancelar} #{mensagem.Emprestimo}" />
                     <br />
                     <br />
                     <h:panelGroup>
                         <h:panelGrid columns="2">
-                            <h:outputText value="Servidor "/>
+                            <h:outputText value="#{mensagem.Servidor}: "/>
                             <h:inputText 
                                 id="servidor_nome_principal_cancelar"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
 
-                            <h:outputText value="Digite seu SIAPE para confirmar: "/>
+                            <h:outputText value="#{mensagem.DigiteSeuSIAPEParaConfirmar}: "/>
                             <h:inputText value="#{principalMB.siape}" size="14"/>
 
-                            <h:commandButton value="Confirmar" action="#{principalMB.cancelarEmprestimo}" />
-                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.cancelarEmprestimo}" />
+                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
 
                             <h:message for="servidor_nome_principal_cancelar" />
                         </h:panelGrid>
@@ -164,22 +184,22 @@
 
             <div style="display: #{principalMB.exibirModalVigilante ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Finalizar Empréstimo - Vigilante" />
+                    <h:outputText value="#{mensagem.FinalizarEmprestimo} - #{mensagem.Vigilante}" />
                     <br />
                     <br />
                     <h:panelGroup>
                         <h:panelGrid columns="2">
-                            <h:outputText value="Servidor Responsável"/>
+                            <h:outputText value="#{mensagem.Servidor} #{mensagem.Responsavel}"/>
                             <h:inputText 
                                 id="servidor_nome_principal_concluirV"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
 
-                            <h:outputText value="Digite seus 6 primeiros dígitos do CPF para confirmar: "/>
+                            <h:outputText value="#{mensagem.DigiteSeus6PrimeirosDigitosDoCPF} #{mensagem.ParaConfirmar}: "/>
                             <h:inputText value="#{principalMB.cpfConfirmarSaida}" size="6"/>
 
-                            <h:commandButton value="Confirmar" action="#{principalMB.concluirEmprestimo}" />
-                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
 
                             <h:message for="servidor_nome_principal_concluirV" />
                         </h:panelGrid>
@@ -189,22 +209,22 @@
 
             <div style="display: #{principalMB.exibirModalServidor ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Finalizar Empréstimo - Servidor" />
+                    <h:outputText value="#{mensagem.FinalizarEmprestimo} - #{mensagem.Servidor}" />
                     <br />
                     <br />
                     <h:panelGroup>
                         <h:panelGrid columns="2">
-                            <h:outputText value="Servidor Responsável"/>
+                            <h:outputText value="#{mensagem.Servidor} #{mensagem.Responsavel}"/>
                             <h:inputText 
                                 id="servidor_nome_principal_concluir"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
 
-                            <h:outputText value="Digite seu SIAPE para confirmar: "/>
+                            <h:outputText value="#{mensagem.DigiteSeuSIAPEParaConfirmar}: "/>
                             <h:inputText value="#{principalMB.siape}" size="14"/>
 
-                            <h:commandButton value="Confirmar" action="#{principalMB.concluirEmprestimo}" />
-                            <h:commandButton value="Cancelar" action="#{principalMB.limparDados}" />
+                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
 
                             <h:message for="servidor_nome_principal_concluir" />
                         </h:panelGrid>

@@ -11,6 +11,7 @@ import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
@@ -19,7 +20,7 @@ import org.hibernate.Session;
 
 @ManagedBean
 @SessionScoped
-public class EspacoMB {
+public class EspacoMB implements Serializable{
 
     private Session session;
     private Espaco espaco;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core">
@@ -26,54 +26,73 @@
         <h:form>
             <h:commandLink action="faces/index.xhtml">
                 <button class="ui-button ui-widget ui-corner-all">
-                    Voltar
+                    #{mensagem.Voltar}
                 </button>
             </h:commandLink>
 
+            <div align="right">
+                &nbsp;&nbsp;
+                <h:commandLink action="#{idiomaMB.ingles}"                                        
+                               immediate="true">
+                    <h:graphicImage value="/imagens/us_32.png" width="24"/>
+                </h:commandLink>
+                &nbsp;&nbsp;
+                <h:commandLink action="#{idiomaMB.portugues}"
+                               immediate="true">
+                    <h:graphicImage value="/imagens/brasil_32.png" width="24"/>
+                </h:commandLink>
+            </div>
+
             <div style="margin: 2% 4%; border-style: solid">
                 <div style="margin: 0 auto;">
-                    <h2 style="text-align: center">Empréstimo de Laboratório</h2>
+                    <h2 style="text-align: center">#{mensagem.EmprestimoDeLaboratorio}</h2>
                     <h:panelGroup>
                         <h:panelGrid columns="3">
-                            <h:outputText value="Servidor (SIAPE): "/>
+                            <h:outputText value="#{mensagem.Servidor} (SIAPE): "/>
                             <h:inputText id="siape_emp" value="#{emprestimoMB.emprestimo.servidor.siape}" size="30"/>
                             <h:message for="siape_emp" />
 
-                            <h:outputText value="Servidor (6 Primeiros Dígitos CPF): "/>
+                            <h:outputText value="#{mensagem.Servidor} (6 #{mensagem.PrimeirosDigitos} CPF): "/>
                             <h:inputText id="cpf_emp" value="#{emprestimoMB.sixCPF}" size="30"/>
                             <h:message for="cpf_emp" />
                         </h:panelGrid>
 
                         <h:panelGrid columns="2">
-                            <h:outputText value="Laboratório: "/>
+                            <h:outputText value="#{mensagem.Laboratorio}: "/>
                             <h:selectOneMenu id="labs" value="#{emprestimoMB.espaco}" style="width: 110%" converter="espacoConverter">
                                 <f:selectItems value="#{emprestimoMB.espacos}" var="esp" itemLabel="#{esp}" itemValue="#{esp}" />
                             </h:selectOneMenu>
                         </h:panelGrid>
 
                         <h:panelGrid columns="4">
-                            <h:outputText value="Data Inicio: " />
-                            <h:inputText value="#{emprestimoMB.horario.dataInicio}" size="20" id="dataIni">
+                            <h:outputText value="#{mensagem.DataInicio}: " />
+                            <h:inputText value="#{emprestimoMB.horario.dataInicio}" size="7" id="dataIni">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
 
-                            <h:outputText value="Horário Inicio: "/>
+                            <h:outputText value="#{mensagem.HorarioInicio}: "/>
                             <h:selectOneMenu id="horaIni" value="#{emprestimoMB.horario.horarioSelecionadoIni}" style="width: 100%" >
                                 <f:selectItems value="#{emprestimoMB.horario.horariosInicial}" var="horaIni" itemLabel="#{horaIni}" itemValue="#{horaIni}" />
                             </h:selectOneMenu>
 
-                            <h:outputText value="Data Fim: " />
-                            <h:inputText value="#{emprestimoMB.horario.dataFinal}" size="20" id="dataFim">
+                            <h:outputText value="#{mensagem.HorarioFinal}: " />
+                            <h:inputText value="#{emprestimoMB.horario.dataFinal}" size="7" id="dataFim">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
 
-                            <h:outputText value="Horário Final: "/>
+                            <h:outputText value="#{mensagem.HorarioFinal}: "/>
                             <h:selectOneMenu id="horaFim" value="#{emprestimoMB.horario.horarioSelecionadoFim}" style="width: 100%" >
                                 <f:selectItems value="#{emprestimoMB.horario.horariosFim}" var="horaFim" itemLabel="#{horaFim}" itemValue="#{horaFim}" />
                             </h:selectOneMenu>
 
-                            <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.configurarValores}" value="Salvar" />
-                            <h:commandButton style="margin-top: 5px; margin-bottom: 5px" action="#{emprestimoMB.limparTela}" value="Cancelar" />
+                            <h:commandButton 
+                                style="margin-top: 5px; margin-bottom: 5px" 
+                                action="#{emprestimoMB.configurarValores}" 
+                                value="#{mensagem.Salvar}" />
+                            <h:commandButton 
+                                style="margin-top: 5px; margin-bottom: 5px" 
+                                action="#{emprestimoMB.limparTela}" 
+                                value="#{mensagem.Cancelar}" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
@@ -81,29 +100,29 @@
 
             <div id="modal" style="display: #{emprestimoMB.exibirModal ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Confirmar Empréstimo?" />
+                    <h:outputText value="#{mensagem.Confirmar} #{mensagem.Emprestimo}?" />
                     <br />
                     <br />
                     <h:panelGroup>
                         <h:panelGrid columns="2">
-                            <h:outputText value="Servidor: "/>
+                            <h:outputText value="#{mensagem.Servidor}: "/>
                             <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.servidor.dadosPessoais.nome}" size="40"/>
-                            
-                            <h:outputText value="Espaço: "/>
+
+                            <h:outputText value="#{mensagem.Espaco}: "/>
                             <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.espaco.nome}" size="40"/>
-                            
-                            <h:outputText value="Data início: "/>
+
+                            <h:outputText value="#{mensagem.DataInicio}: "/>
                             <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.dataInicio}" size="40">
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
-                            
-                            <h:outputText value="Data Fim: "/>
+
+                            <h:outputText value="#{mensagem.DataFim}: "/>
                             <h:inputText disabled="true" value="#{emprestimoMB.emprestimo.dataFim}" size="40">
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
-                            
-                            <h:commandButton value="Confirmar" action="#{emprestimoMB.salvar}" />
-                            <h:commandButton value="Cancelar" action="#{emprestimoMB.cancelarEmprestimo}" />
+
+                            <h:commandButton value="#{mensagem.Confirmar}" action="#{emprestimoMB.salvar}" />
+                            <h:commandButton value="#{mensagem.Cancelar}" action="#{emprestimoMB.cancelarEmprestimo}" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
