@@ -2,7 +2,6 @@ package br.edu.ifpr.irati.ads.mb;
 
 import br.edu.ifpr.irati.ads.dao.VigilanteDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
-import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
@@ -15,7 +14,7 @@ import org.hibernate.Session;
 
 @ManagedBean
 @SessionScoped
-public class VigilanteMB implements Serializable{
+public class VigilanteMB implements Serializable {
 
     private Session session;
     private VigilanteDAO vigilanteDAO;
@@ -40,16 +39,6 @@ public class VigilanteMB implements Serializable{
 
     public void salvarVigilante() {
         try {
-            if (vigilante.getDadosPessoais().getNome().isBlank()) {
-                throw new ValidacaoCampoException("O Campo Nome precisa estar preenchido!");
-            }
-            if (vigilante.getDadosPessoais().getCpf().isBlank()) {
-                throw new ValidacaoCampoException("O Campo CPF precisa estar preenchido!");
-            }
-            if (vigilante.getDadosPessoais().getEmail().isBlank()) {
-                throw new ValidacaoCampoException("O Campo E-mail precisa estar preenchido!");
-            }
-
             if (vigilante.getId() == null || vigilante.getId() == 0) {
                 vigilanteDAO.salvar(vigilante);
                 this.vigilantes.add(vigilante);
@@ -59,24 +48,25 @@ public class VigilanteMB implements Serializable{
 
             cancelarVigilante();
         } catch (PersistenceException ex) {
-            Util.mensagemErro("Não foi possível salvar.", "nome_vigilante");
-        } catch (ValidacaoCampoException vce) {
-            Util.mensagemErro(vce.getMessage(), "nome_vigilante");
+            Util.mensagemErro("Não foi possível salvar.", "salvar_cad_vig");
         }
     }
 
-    public void cancelarVigilante() {
+    public String cancelarVigilante() {
         this.vigilante = new Vigilante();
         this.exibirModalExcluir = false;
+        return "vigilante.xhtml";
     }
 
-    public void alterarVigilante(Vigilante vig) {
+    public String alterarVigilante(Vigilante vig) {
         this.vigilante = vig;
+        return "vigilante.xhtml";
     }
 
-    public void abrirModalExcluir(Vigilante vig) {
+    public String abrirModalExcluir(Vigilante vig) {
         this.vigilante = vig;
         this.exibirModalExcluir = true;
+        return "vigilante.xhtml";
     }
 
     public void excluirVigilante() {
@@ -84,10 +74,10 @@ public class VigilanteMB implements Serializable{
             vigilantes.remove(vigilante);
             vigilante.excluir();
             vigilanteDAO.alterar(vigilante);
+            cancelarVigilante();
         } catch (PersistenceException ex) {
-            Util.mensagemErro("Não foi possível excluir", "nome_vigilante");
+            Util.mensagemErro("Não foi possível excluir", "excluir_cad_vig");
         }
-        cancelarVigilante();
     }
 
     public Vigilante getVigilante() {
