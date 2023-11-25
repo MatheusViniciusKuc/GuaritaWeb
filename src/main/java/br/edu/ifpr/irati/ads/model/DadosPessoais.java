@@ -2,10 +2,11 @@ package br.edu.ifpr.irati.ads.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 
 @Embeddable
-public class DadosPessoais {
+public class DadosPessoais implements Serializable{
 
     private String telefone;
     @NotBlank

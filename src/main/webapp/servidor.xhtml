@@ -4,137 +4,248 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f = "http://java.sun.com/jsf/core">
     <head>
-        <title>Vigilantes</title>
+        <title>Servidores</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
     </head>
     <h:body>
         <h:form>
-            <h:commandLink action="faces/index.xhtml">
-                <button class="ui-button ui-widget ui-corner-all">
-                    Voltar
-                </button>
-            </h:commandLink>
-
-            <h:message for="nome_servidor" />
-
             <div>
-                <h2>
-                    <h:outputText value="#{servidorMB.servidor.id > 0 ? 'Alterar:' : 'Cadastrar:'}" />
-                </h2>
+                <h:commandLink action="faces/index.xhtml" immediate="true">
+                    <button class="ui-button ui-widget ui-corner-all">
+                        Voltar
+                    </button>
+                </h:commandLink>
 
-                <h:panelGroup>
-                    <h:panelGrid columns="6">
-                        <h:outputLabel value="Nome: "/>              
-                        <h:inputText id="nome_servidor" value="#{servidorMB.servidor.dadosPessoais.nome}"/>
+                <div>
+                    <h2>
+                        <h:outputText value="#{servidorMB.servidor.id > 0 ? 'Alterar:' : 'Cadastrar:'}" />
+                    </h2>
 
-                        <h:outputLabel value="Telefone: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.telefone}"/>
+                    <h:panelGroup id="servs_cad">
+                        <h:panelGrid columns="9">
+                            <h:outputLabel value="Nome: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.dadosPessoais.nome}"
+                                id="nome_cad_serv"
+                                onkeypress="return permitirApenasLetras(event)"
+                                required="true"
+                                requiredMessage="Nome obrigatório"/>
+                            <h:message style="color:red" for="nome_cad_serv" />
 
-                        <h:outputLabel value="Bairro: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.bairro}"/>
+                            <h:outputLabel value="Telefone: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.dadosPessoais.telefone}"
+                                id="telefone_cad_serv"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                maxlength="11">
+                                <f:validateLength minimum = "11" maximum = "11"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="telefone_cad_serv" />
 
-                        <h:outputLabel value="Siape: "/>              
-                        <h:inputText value="#{servidorMB.servidor.siape}"/>
+                            <h:outputLabel value="Bairro: "/>              
+                            <h:inputText
+                                id="bairro_cad_serv"
+                                onkeypress="return permitirApenasLetras(event)"
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.bairro}"/>
+                            <h:message style="color:red" for="bairro_cad_serv" />
 
-                        <h:outputLabel value="UF: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.uf}"/>
+                            <h:outputLabel value="Siape: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.siape}"
+                                id="siape_cad_serv"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                maxlength="7"
+                                required="true"
+                                requiredMessage="Siape obrigatório">
+                                <f:validateLength minimum = "7" maximum = "7"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="siape_cad_serv" />
 
-                        <h:outputLabel value="Rua: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.rua}"/>
+                            <h:outputLabel value="UF: "/>              
+                            <h:inputText 
+                                id="uf_cad_serv"
+                                onkeypress="return permitirApenasLetras(event)"
+                                maxlength="2"
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.uf}">
+                                <f:validateLength minimum = "2" maximum = "2"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="uf_cad_serv" />
 
-                        <h:outputLabel value="CPF: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.cpf}"/>
+                            <h:outputLabel value="Rua: "/>              
+                            <h:inputText
+                                id="rua_cad_serv"
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.rua}"
+                                onkeypress="return permitirApenasLetras(event)"/>
+                            <h:message style="color:red" for="rua_cad_serv" />
 
-                        <h:outputLabel value="Cidade: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.cidade}"/>
+                            <h:outputLabel value="CPF: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.dadosPessoais.cpf}"
+                                id="cpf_cad_serv"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                required="true"
+                                requiredMessage="CPF obrigatório"
+                                maxlength="11">
+                                <f:validateLength minimum = "11" maximum = "11"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="cpf_cad_serv" />
 
-                        <h:outputLabel value="Número: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.numero}"/>
+                            <h:outputLabel value="Cidade: "/>              
+                            <h:inputText 
+                                id="cidade_cad_serv"
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.cidade}"
+                                onkeypress="return permitirApenasLetras(event)"/>
+                            <h:message style="color:red" for="cidade_cad_serv" />
 
-                        <h:outputLabel value="E-mail: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.email}"/>
+                            <h:outputLabel value="Número: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.numero}"
+                                id="numero_cad_serv"
+                                onkeypress="return permitirApenasNumeros(event);"/>
+                            <h:message style="color:red" for="numero_cad_serv" />
 
-                        <h:outputLabel value="CEP: "/>              
-                        <h:inputText value="#{servidorMB.servidor.dadosPessoais.endereco.cep}"/>
-                    </h:panelGrid>
+                            <h:outputLabel value="E-mail: "/>              
+                            <h:inputText 
+                                id="email_cad_serv"
+                                value="#{servidorMB.servidor.dadosPessoais.email}"
+                                required="true"
+                                requiredMessage="E-mail obrigatório"
+                                validatorMessage="E-mail inválido">
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </h:inputText>
+                            <h:message style="color:red" for="email_cad_serv" />
 
-                    <h:panelGrid columns="2">
-                        <h:commandButton action="#{servidorMB.salvarServidor}" value="Salvar"/>  
-                        <h:commandButton action="#{servidorMB.cancelarServidor}" value="Cancelar"/>  
-                    </h:panelGrid>
-                </h:panelGroup>
+                            <h:outputLabel value="CEP: "/>              
+                            <h:inputText 
+                                value="#{servidorMB.servidor.dadosPessoais.endereco.cep}"
+                                id="cep_cad_serv"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                maxlength="8">
+                                <f:validateLength minimum = "8" maximum = "8"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="cep_cad_serv" />
+                        </h:panelGrid>
 
-                <h3 style="text-align: center">
-                    <h:outputText value="Servidores" rendered="#{!servidorMB.servidores.isEmpty()}" />
-                </h3>
-
-                <h:panelGroup style="text-align: center" rendered="#{!servidorMB.servidores.isEmpty()}">
-                    <h:dataTable var="serv" value="#{servidorMB.servidores}" border="1" width="100" style="width: 100%">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Nome"/>
-                            </f:facet>
-                            <h:outputText value="#{serv.dadosPessoais.nome}" />
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="SIAPE"/>
-                            </f:facet>
-                            <h:outputText value="#{serv.siape}" />
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="E-mail"/>
-                            </f:facet>
-                            <h:outputText value="#{serv.dadosPessoais.email}" />
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Telefone"/>
-                            </f:facet>
-                            <h:outputText value="#{serv.dadosPessoais.telefone}" />
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Endereço"/>
-                            </f:facet>
-                            <h:outputText value="#{serv.dadosPessoais.endereco}" />
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Alterar"/>
-                            </f:facet>
-                            <h:commandButton action="#{servidorMB.alterarServidor(serv)}" value="Alterar"/>  
-                        </h:column>  
-
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Excluir"/>
-                            </f:facet>
-                            <h:commandButton action="#{servidorMB.abrirModalExcluir(serv)}" value="Excluir"/>  
-                        </h:column>  
-                    </h:dataTable>
-                </h:panelGroup>
-            </div> 
-
-            <div style="display: #{servidorMB.exibirModalExcluir ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
-                <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
-                    <h:outputText value="Confirmar Exclusão?" />
-                    <br />
-                    <br />
-                    <h:panelGroup>
-                        <h:panelGrid columns="2">
-                            <h:commandButton value="Confirmar" action="#{servidorMB.excluirServidor}" />
-                            <h:commandButton value="Cancelar" action="#{servidorMB.cancelarServidor}" />
+                        <h:panelGrid columns="3">
+                            <h:commandButton 
+                                action="#{servidorMB.salvarServidor}" 
+                                id="salvar_cad_serv"
+                                value="Salvar"/>  
+                            <h:commandButton 
+                                action="#{servidorMB.cancelarServidor}" 
+                                value="Cancelar"
+                                immediate="true"/>  
+                            <h:message style="color:red" for="salvar_cad_serv" />
                         </h:panelGrid>
                     </h:panelGroup>
+
+                    <h3 style="text-align: center">
+                        <h:outputText value="Servidores" rendered="#{!servidorMB.servidores.isEmpty()}" />
+                    </h3>
+
+                    <h:panelGroup style="text-align: center" rendered="#{!servidorMB.servidores.isEmpty()}">
+                        <h:dataTable var="serv" value="#{servidorMB.servidores}" border="1" width="100" style="width: 100%">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nome"/>
+                                </f:facet>
+                                <h:outputText value="#{serv.dadosPessoais.nome}" />
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="SIAPE"/>
+                                </f:facet>
+                                <h:outputText value="#{serv.siape}" />
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="E-mail"/>
+                                </f:facet>
+                                <h:outputText value="#{serv.dadosPessoais.email}" />
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Telefone"/>
+                                </f:facet>
+                                <h:outputText value="#{serv.dadosPessoais.telefone}" />
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Endereço"/>
+                                </f:facet>
+                                <h:outputText value="#{serv.dadosPessoais.endereco}" />
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Alterar"/>
+                                </f:facet>
+                                <h:commandButton 
+                                    action="#{servidorMB.alterarServidor(serv)}" 
+                                    value="Alterar"
+                                    immediate="true"/>  
+                            </h:column>  
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Excluir"/>
+                                </f:facet>
+                                <h:commandButton 
+                                    action="#{servidorMB.abrirModalExcluir(serv)}" 
+                                    value="Excluir"
+                                    immediate="true"/>  
+                            </h:column>  
+                        </h:dataTable>
+                    </h:panelGroup>
+                </div> 
+
+                <div style="display: #{servidorMB.exibirModalExcluir ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
+                    <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
+                        <h:outputText value="Confirmar Exclusão?" />
+                        <br />
+                        <br />
+                        <h:panelGroup>
+                            <h:panelGrid columns="3">
+                                <h:commandButton 
+                                    id="excluir_cad_serv"
+                                    value="Confirmar" 
+                                    action="#{servidorMB.excluirServidor}" />
+                                <h:commandButton 
+                                    value="Cancelar" 
+                                    action="#{servidorMB.cancelarServidor}" 
+                                    immediate="true"/>
+                                <h:message style="color:red" for="excluir_cad_serv" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </div>
                 </div>
             </div>
         </h:form>
+
+        <script>
+            function permitirApenasNumeros(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[0-9]/.test(char);
+            }
+
+            function permitirApenasLetras(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[a-zA-Z]/.test(char);
+            }
+        </script>
     </h:body>
 </html>

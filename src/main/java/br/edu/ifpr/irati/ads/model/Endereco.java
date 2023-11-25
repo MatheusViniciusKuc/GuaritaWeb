@@ -1,9 +1,10 @@
 package br.edu.ifpr.irati.ads.model;
 
 import jakarta.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
-public class Endereco {
+public class Endereco implements Serializable{
 
     private String cidade;
     private String uf;
@@ -80,7 +81,28 @@ public class Endereco {
 
     @Override
     public String toString() {
-        return cidade + "/" + uf.toUpperCase() + " - " + bairro + ", " + rua + " - " + numero + ", " + cep;
+        String end = "";
+        
+        if (cidade != null) {
+            end += cidade;
+        }
+        if (uf != null) {
+            end += "/ " + uf.toUpperCase();
+        }
+        if (bairro != null) {
+            end += " - " + bairro;
+        }
+        if (rua != null) {
+            end += ", " + rua;
+        }
+        if (numero != null) {
+            end += " - " + numero;
+        }
+        if (cep != null) {
+            end += ", " + cep;
+        }
+        
+        return end;
     }
 
 }

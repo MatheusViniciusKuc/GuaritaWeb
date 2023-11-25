@@ -39,28 +39,4 @@ public class EmprestimoDAO extends GenericDAO<Emprestimo> {
             throw new PersistenceException(e.getMessage());
         }
     }
-
-    /*
-    public boolean isDisponivelParaEmprestimo(Date dataInicio, Date dataFim,
-            Espaco espaco) throws PersistenceException {
-        try {
-            String hql = "SELECT COUNT(*) FROM Emprestimo e "
-                    + "WHERE ((:dataInicio BETWEEN e.dataInicio AND e.dataFim) "
-                    + "OR (:dataFim BETWEEN e.dataInicio AND e.dataFim)) "
-                    + "AND e.espaco = :espaco "
-                    + "AND (e.status != :statusCancelado)";
-
-            Long count = (Long) session.createQuery(hql)
-                    .setParameter("dataInicio", dataInicio)
-                    .setParameter("dataFim", dataFim)
-                    .setParameter("espaco", espaco)
-                    .setParameter("statusCancelado", Status.CANCELADO)
-                    .uniqueResult();
-
-            return count == 0;
-        } catch (HibernateException e) {
-            throw new PersistenceException(e.getMessage());
-        }
-    }
-     */
 }

@@ -6,6 +6,11 @@
     <head>
         <title>Espaços</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>        
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     </head>
     <h:body>
         <h:form>
@@ -62,14 +67,19 @@
                             <f:facet name="header">
                                 <h:outputText value="Excluir"/>
                             </f:facet>
-                            <h:commandButton action="#{espacoMB.abrirModalExcluir(esp)}" value="Excluir"/>  
+                            <h:commandButton 
+                                action="#{espacoMB.exibirModal(esp, 'EXCLUIR')}" 
+                                value="Excluir"/>  
                         </h:column>  
 
                         <h:column>
                             <f:facet name="header">
                                 <h:outputText value="Ocorrência"/>
                             </f:facet>
-                            <h:commandButton disabled="#{!esp.disponivelEmprestimo}" action="#{espacoMB.abrirModalOcorrencia(esp)}" value="Adicionar Ocorrência"/>  
+                            <h:commandButton 
+                                disabled="#{!esp.disponivelEmprestimo}" 
+                                action="#{espacoMB.exibirModal(esp, 'REGISTRAR_OCORRENCIA')}" 
+                                value="Adicionar Ocorrência"/>  
                         </h:column>  
 
                         <h:column>
@@ -78,7 +88,7 @@
                             </f:facet>
                             <h:commandButton 
                                 disabled="#{esp.disponivelEmprestimo}" 
-                                action="#{espacoMB.abrirModalLiberarEmprestimo(esp)}" 
+                                action="#{espacoMB.exibirModal(esp, 'LIBERAR_EMPRESTIMO')}" 
                                 value="Liberar"/>  
                         </h:column> 
 
@@ -113,16 +123,19 @@
                             <f:facet name="header">
                                 <h:outputText value="Servidor / Vigilante"/>
                             </f:facet>
-                            <h:outputText value="#{oco.servidor != null ? oco.servidor.nome : oco.vigilante.nome}" />
+                            <h:outputText 
+                                value="#{oco.servidor != null 
+                                         ? oco.servidor.dadosPessoais.nome 
+                                         : oco.vigilante.dadosPessoais.nome}" />
                         </h:column>  
 
                         <h:column>
                             <f:facet name="header">
                                 <h:outputText value="Data do Registro"/>
                             </f:facet>
-                            <h:inputText disabled="true" value="#{oco.dataRegistrada}">
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
-                            </h:inputText>
+                            <h:outputText value="#{oco.dataRegistrada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                            </h:outputText>
                         </h:column>  
                     </h:dataTable>
                 </h:panelGroup>
@@ -139,10 +152,19 @@
                             <h:inputText value="#{espacoMB.ocorrencia.ocorrido}" />
 
                             <h:outputText value="Vigilante (Digite seus 6 primeiros dígitos do CPF): "/>
-                            <h:inputText id="cpf_siape_registrar_oco" value="#{espacoMB.cpf}" size="6"/>
+                            <h:inputText 
+                                id="cpf_siape_registrar_oco" 
+                                value="#{espacoMB.cpf}" 
+                                size="6"
+                                maxlength="6"
+                                onkeypress="return permitirApenasNumeros(event)"/>
 
                             <h:outputText value="Servidor (Digite seu SIAPE): "/>
-                            <h:inputText value="#{espacoMB.siape}" size="14"/>
+                            <h:inputText 
+                                value="#{espacoMB.siape}" 
+                                size="14"
+                                maxlength="7"
+                                onkeypress="return permitirApenasNumeros(event)"/>
 
                             <h:outputLabel value="Perdeu a chave?" />
                             <h:selectBooleanCheckbox value="#{espacoMB.perdeuChave}" />
@@ -162,9 +184,14 @@
                     <br />
                     <br />
                     <h:panelGroup>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="3">
                             <h:outputText value="Vigilante (Digite seus 6 primeiros dígitos do CPF): "/>
-                            <h:inputText id="cpf_vigilante_liberar_esp" value="#{espacoMB.cpfVigilante}" size="6"/>
+                            <h:inputText 
+                                id="cpf_vigilante_liberar_esp" 
+                                value="#{espacoMB.cpfVigilante}" 
+                                onkeypress="return permitirApenasNumeros(event)"
+                                size="6"
+                                maxlength="6"/>
                             <h:message for="cpf_vigilante_liberar_esp" />
 
                             <h:commandButton value="Confirmar" action="#{espacoMB.liberarEmprestimo}" />
@@ -188,5 +215,14 @@
                 </div>
             </div>
         </h:form>
+
+        <script>
+            function permitirApenasNumeros(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[0-9]/.test(char);
+            }
+        </script>
     </h:body>
 </html>

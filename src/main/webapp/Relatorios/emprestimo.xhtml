@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>Relatório de Empréstimos</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>        
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    </h:head>
+
+    <h:body>
+        <h:form>
+            <h:commandLink action="/index.xhtml">
+                <button class="ui-button ui-widget ui-corner-all">
+                    Voltar
+                </button>
+            </h:commandLink>
+
+            <div>
+                <h3 style="text-align: center">
+                    <h:outputText value="Relatório"/>
+                </h3>
+
+                <div style="padding: 3px; margin: 3px">
+                    <h:panelGroup>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Data Inicio: " />
+                            <h:inputText value="#{relatorioEmprestimoMB.dateInicioFiltro}" size="6">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
+                            </h:inputText>
+
+                            <h:outputText value="Data Final: " />
+                            <h:inputText value="#{relatorioEmprestimoMB.dateFinalFiltro}" size="6">
+                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
+                            </h:inputText>
+
+                            <h:commandLink action="#{relatorioEmprestimoMB.filtrar}">
+                                Filtrar
+                            </h:commandLink>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </div>
+
+                <h:panelGroup style="text-align: center">
+                    <h:dataTable var="emp" value="#{relatorioEmprestimoMB.emprestimos}" border="1" width="100" style="width: 100%">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortEspaco}">
+                                    Espaço
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.espaco.nome}" />
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortServidor}">
+                                    Servidor
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.servidor.dadosPessoais.nome}" />
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortDataInicial}">
+                                    Data de Início
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.dataInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                            </h:outputText>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortDataFinal}">
+                                    Data de Fim
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.dataFim}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00" />
+                            </h:outputText>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortStatus}">
+                                    Status
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.status}" />
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <h:commandLink action="#{relatorioEmprestimoMB.sortConcluido}">
+                                    Concluído Por
+                                </h:commandLink>
+                            </f:facet>
+                            <h:outputText value="#{emp.concluidoPor}" />
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+            </div> 
+        </h:form>
+    </h:body>
+</html>

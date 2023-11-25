@@ -15,17 +15,16 @@ import br.edu.ifpr.irati.ads.model.Status;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.hibernate.Session;
 
 @ManagedBean
 @ViewScoped
-public class PrincipalMB {
+public class PrincipalMB implements Serializable{
 
     private Session session;
     private EmprestimoDAO emprestimoDAO;

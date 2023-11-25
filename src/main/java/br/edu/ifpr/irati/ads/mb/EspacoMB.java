@@ -6,11 +6,14 @@ import br.edu.ifpr.irati.ads.dao.VigilanteDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Espaco;
+import br.edu.ifpr.irati.ads.model.Modal;
 import br.edu.ifpr.irati.ads.model.Ocorrencia;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
+import jakarta.persistence.NoResultException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
@@ -19,7 +22,7 @@ import org.hibernate.Session;
 
 @ManagedBean
 @SessionScoped
-public class EspacoMB {
+public class EspacoMB implements Serializable {
 
     private Session session;
     private Espaco espaco;
@@ -62,6 +65,24 @@ public class EspacoMB {
         this.ocorrencia = new Ocorrencia();
         this.espaco = new Espaco();
     }
+    
+    public void exibirModal(Espaco esp, String modalString) {
+        this.exibirOcorrencias = false;
+        this.espaco = esp;
+        Modal modal = Util.buscarModal(modalString);
+        switch (modal) {
+            case EXCLUIR:
+                this.exibirModalExcluir = true;
+                break;
+            case LIBERAR_EMPRESTIMO:
+                this.exibirModalLiberarEmprestimo = true;
+                break;
+            case REGISTRAR_OCORRENCIA:
+                this.exibirModalOcorrencia = true;
+                break;
+            default:
+        }
+    }
 
     public void salvarEspaco() {
         try {
@@ -83,15 +104,13 @@ public class EspacoMB {
         }
     }
 
-    public void abrirModalLiberarEmprestimo(Espaco esp) {
-        this.espaco = esp;
-        this.exibirModalLiberarEmprestimo = true;
-    }
-
     public void liberarEmprestimo() {
         try {
             if (cpfVigilante.isBlank()) {
                 throw new ValidacaoCampoException("Precisa preencher o campo Vigilante!");
+            }
+            if (cpfVigilante.length() < 6) {
+                throw new ValidacaoCampoException("O campo CPF precisa ter 6 dígitos!");
             }
 
             VigilanteDAO vigilanteDAO = new VigilanteDAO(session);
@@ -110,16 +129,11 @@ public class EspacoMB {
             Util.mensagemErro("Não foi possível liberar!", "cpf_vigilante_liberar_esp");
         } catch (ValidacaoCampoException vce) {
             Util.mensagemErro(vce.getMessage(), "cpf_vigilante_liberar_esp");
+        } catch (NoResultException nre) {
+            Util.mensagemErro("Vigilante não encontrado!", "cpf_vigilante_liberar_esp");
         }
-        cancelarEspaco();
     }
-
-    public void abrirModalExcluir(Espaco esp) {
-        this.exibirOcorrencias = false;
-        this.espaco = esp;
-        this.exibirModalExcluir = true;
-    }
-
+    
     public void excluirEspaco() {
         try {
             espacos.remove(espaco);
@@ -136,30 +150,35 @@ public class EspacoMB {
         this.espaco = esp;
     }
 
-    public void abrirModalOcorrencia(Espaco esp) {
-        this.espaco = esp;
-        this.exibirModalOcorrencia = true;
-    }
-
     public void registrarOcorrencia() {
         try {
-            if (ocorrencia.getOcorrido().isBlank()) 
+            if (ocorrencia.getOcorrido().isBlank()) {
                 throw new ValidacaoCampoException("Deve possuir uma mensagem.");
-            
+            }
+            if (ocorrencia.getOcorrido().length() < 15) {
+                throw new ValidacaoCampoException("A mensagem precisa de 15 caracteres.");
+            }
+
             Servidor servidor = null;
             Vigilante vigilante = null;
 
             try {
                 if (!cpf.isBlank()) {
+                    if (cpf.length() < 6) {
+                        throw new ValidacaoCampoException("O campo CPF precisa ter 6 números!");
+                    }
                     VigilanteDAO vigilanteDAO = new VigilanteDAO(session);
                     vigilante = vigilanteDAO.buscarPorCPF(cpf);
                 } else if (!siape.isBlank()) {
+                    if (siape.length() < 7) {
+                        throw new ValidacaoCampoException("O campo Siape precisa ter 7 números!");
+                    }
                     ServidorDAO servidorDAO = new ServidorDAO(session);
                     servidor = servidorDAO.buscarPorSIAPE(siape);
                 } else {
                     throw new ValidacaoCampoException("Informe um dos campos: Servidor ou Vigilante.");
                 }
-            } catch (PersistenceException ex) {
+            } catch (NoResultException ex) {
                 throw new ValidacaoCampoException("Servidor / Vigilante não encontrado!");
             }
 
