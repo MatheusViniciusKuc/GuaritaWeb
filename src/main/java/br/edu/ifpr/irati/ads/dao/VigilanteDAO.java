@@ -2,6 +2,7 @@ package br.edu.ifpr.irati.ads.dao;
 
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Vigilante;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import java.util.List;
 import org.hibernate.HibernateException;
@@ -35,6 +36,36 @@ public class VigilanteDAO extends GenericDAO<Vigilante> {
 
             return query.getResultList();
         } catch (HibernateException | NullPointerException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+    
+    public Vigilante existeCpf(String cpf) throws PersistenceException {
+        try {
+            String hql = "SELECT v FROM Vigilante v "
+                    + "WHERE v.dadosPessoais.cpf = :cpf";
+
+            return (Vigilante) session.createQuery(hql)
+                    .setParameter("cpf", cpf)
+                    .uniqueResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (HibernateException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+    
+    public Vigilante existeEmail(String email) throws PersistenceException {
+        try {
+            String hql = "SELECT v FROM Vigilante v "
+                    + "WHERE v.dadosPessoais.email = :email";
+
+            return (Vigilante) session.createQuery(hql)
+                    .setParameter("email", email)
+                    .uniqueResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (HibernateException e) {
             throw new PersistenceException(e.getMessage());
         }
     }

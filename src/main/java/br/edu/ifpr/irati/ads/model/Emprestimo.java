@@ -1,5 +1,6 @@
 package br.edu.ifpr.irati.ads.model;
 
+import br.edu.ifpr.irati.ads.model.enums.Status;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Entity;

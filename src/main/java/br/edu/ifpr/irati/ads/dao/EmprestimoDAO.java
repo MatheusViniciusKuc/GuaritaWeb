@@ -3,7 +3,7 @@ package br.edu.ifpr.irati.ads.dao;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
-import br.edu.ifpr.irati.ads.model.Status;
+import br.edu.ifpr.irati.ads.model.enums.Status;
 import br.edu.ifpr.irati.ads.util.Util;
 import jakarta.persistence.Query;
 import java.text.ParseException;

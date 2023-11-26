@@ -1,6 +1,6 @@
 package br.edu.ifpr.irati.ads.util;
 
-import br.edu.ifpr.irati.ads.model.Modal;
+import br.edu.ifpr.irati.ads.model.enums.Modal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

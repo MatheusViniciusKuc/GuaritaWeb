@@ -6,7 +6,7 @@ import br.edu.ifpr.irati.ads.dao.VigilanteDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Espaco;
-import br.edu.ifpr.irati.ads.model.Modal;
+import br.edu.ifpr.irati.ads.model.enums.Modal;
 import br.edu.ifpr.irati.ads.model.Ocorrencia;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.model.Vigilante;

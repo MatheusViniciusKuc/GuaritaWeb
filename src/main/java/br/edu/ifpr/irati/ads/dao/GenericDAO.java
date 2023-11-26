@@ -69,7 +69,7 @@ public class GenericDAO<T> implements Dao<T>, Serializable {
     public List<T> buscarTodos() throws PersistenceException {
         try {
             String hql = "from " + this.classePersistente.getCanonicalName();
-            Query query = session.createQuery(hql,this.classePersistente);
+            Query query = session.createQuery(hql, this.classePersistente);
             List results = query.getResultList();
             return results;
         } catch (HibernateException | NullPointerException e) {

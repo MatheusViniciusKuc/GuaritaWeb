@@ -2,6 +2,7 @@ package br.edu.ifpr.irati.ads.mb;
 
 import br.edu.ifpr.irati.ads.dao.ServidorDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
+import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
@@ -21,6 +22,7 @@ public class ServidorMB implements Serializable {
     private Servidor servidor;
     private List<Servidor> servidores;
     private Boolean exibirModalExcluir;
+    private Boolean disableInputText;
 
     public ServidorMB() {
         configurarConfiguracoesIniciais();
@@ -46,6 +48,15 @@ public class ServidorMB implements Serializable {
     public void salvarServidor() {
         try {
             if (servidor.getId() == null || servidor.getId() == 0) {
+                if (servidorDAO.existeSiape(servidor.getSiape()) != null) {
+                    throw new ValidacaoCampoException("Esse Siape já está em uso.");
+                }
+                if (servidorDAO.existeCPF(servidor.getDadosPessoais().getCpf()) != null) {
+                    throw new ValidacaoCampoException("Esse CPF já está em uso.");
+                }
+                if (servidorDAO.existeEmail(servidor.getDadosPessoais().getEmail()) != null) {
+                    throw new ValidacaoCampoException("Esse E-mail já está em uso.");
+                }
                 servidorDAO.salvar(servidor);
                 this.servidores.add(servidor);
             } else {
@@ -55,6 +66,8 @@ public class ServidorMB implements Serializable {
             cancelarServidor();
         } catch (PersistenceException ex) {
             Util.mensagemErro("Não foi possível salvar.", "salvar_cad_serv");
+        } catch (ValidacaoCampoException ex) {
+            Util.mensagemErro(ex.getMessage(), "salvar_cad_serv");
         }
     }
 
@@ -94,6 +107,10 @@ public class ServidorMB implements Serializable {
 
     public Servidor getServidor() {
         return servidor;
+    }
+
+    public Boolean getDisableInputText() {
+        return !(servidor.getId() == null || servidor.getId() == 0);
     }
 
 }

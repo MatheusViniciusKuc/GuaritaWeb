@@ -10,9 +10,10 @@ public class DadosPessoais implements Serializable{
 
     private String telefone;
     @NotBlank
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     @NotBlank
-    @Column(name = "cpf", nullable = false)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
     @NotBlank
     @Column(name = "nome", nullable = false)

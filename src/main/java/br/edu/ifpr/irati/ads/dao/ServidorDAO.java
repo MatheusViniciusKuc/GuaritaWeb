@@ -2,6 +2,7 @@ package br.edu.ifpr.irati.ads.dao;
 
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Servidor;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import java.util.List;
 import org.hibernate.HibernateException;
@@ -51,6 +52,51 @@ public class ServidorDAO extends GenericDAO<Servidor> {
 
             return query.getResultList();
         } catch (HibernateException | NullPointerException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+
+    public Servidor existeCPF(String cpf) throws PersistenceException {
+        try {
+            String hql = "SELECT s FROM Servidor s "
+                    + "WHERE s.dadosPessoais.cpf = :cpf";
+
+            return (Servidor) session.createQuery(hql)
+                    .setParameter("cpf", cpf)
+                    .uniqueResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (HibernateException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+
+    public Servidor existeSiape(String siape) throws PersistenceException {
+        try {
+            String hql = "SELECT s FROM Servidor s "
+                    + "WHERE s.siape = :siape";
+
+            return (Servidor) session.createQuery(hql)
+                    .setParameter("siape", siape)
+                    .uniqueResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (HibernateException e) {
+            throw new PersistenceException(e.getMessage());
+        }
+    }
+
+    public Servidor existeEmail(String email) throws PersistenceException {
+        try {
+            String hql = "SELECT s FROM Servidor s "
+                    + "WHERE s.dadosPessoais.email = :email";
+
+            return (Servidor) session.createQuery(hql)
+                    .setParameter("email", email)
+                    .uniqueResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (HibernateException e) {
             throw new PersistenceException(e.getMessage());
         }
     }

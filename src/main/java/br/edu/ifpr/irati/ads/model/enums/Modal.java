@@ -1,4 +1,4 @@
-package br.edu.ifpr.irati.ads.model;
+package br.edu.ifpr.irati.ads.model.enums;
 
 import java.io.Serializable;
 

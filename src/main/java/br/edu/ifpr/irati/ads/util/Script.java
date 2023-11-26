@@ -14,8 +14,8 @@ public class Script {
 
     public static void main(String[] args) throws PersistenceException {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        createLaboratios(session);
-        createProfessores(session);
+        createEspacos(session);
+        createServidores(session);
         createVigilantes(session);
     }
 
@@ -42,7 +42,7 @@ public class Script {
         DadosPessoais dp2 = new DadosPessoais();
         dp2.setCpf("99988877744");
         dp2.setNome("Zé da Goiaba");
-        dp2.setEmail("zedavilla@gmail.com");
+        dp2.setEmail("zedagoiaba@gmail.com");
         dp2.setTelefone("42999859898");
         Endereco e2 = new Endereco();
         e2.setUf("PR");
@@ -62,7 +62,7 @@ public class Script {
         }
     }
 
-    public static void createProfessores(Session session) {
+    public static void createServidores(Session session) {
         Dao<Servidor> dao = new GenericDAO<>(Servidor.class, session);
 
         Servidor p1 = new Servidor();
@@ -108,7 +108,7 @@ public class Script {
         }
     }
 
-    public static void createLaboratios(Session session) {
+    public static void createEspacos(Session session) {
         Dao<Espaco> labDAO = new GenericDAO<>(Espaco.class, session);
 
         Espaco lab01 = new Espaco();

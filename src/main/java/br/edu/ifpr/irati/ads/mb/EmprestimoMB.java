@@ -7,7 +7,7 @@ import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
-import br.edu.ifpr.irati.ads.model.Horario;
+import br.edu.ifpr.irati.ads.util.Horario;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
