@@ -14,11 +14,12 @@ import br.edu.ifpr.irati.ads.util.Util;
 import jakarta.persistence.NoResultException;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 
 @ManagedBean
@@ -35,6 +36,7 @@ public class EmprestimoMB implements Serializable {
     private Boolean exibirModal;
     private Horario horario;
     private Boolean isEspacoDisponivel;
+    private Boolean isPaginaIngles;
 
     public EmprestimoMB() {
         configurarConfiguracoesIniciais();
@@ -50,7 +52,16 @@ public class EmprestimoMB implements Serializable {
         } catch (PersistenceException ex) {
             isEspacoDisponivel = false;
         }
+        isPaginaIngles = false;
         limparTela();
+    }
+
+    private void verificarIdiomaPagina() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        Locale locale = facesContext.getViewRoot().getLocale();
+
+        isPaginaIngles = !(locale.getLanguage().equals("pt")
+                && locale.getCountry().equals("BR"));
     }
 
     public void limparTela() {
@@ -61,6 +72,7 @@ public class EmprestimoMB implements Serializable {
     }
 
     public void configurarValores() {
+        verificarIdiomaPagina();
         try {
             Servidor s = localizarServidor();
 
@@ -70,11 +82,15 @@ public class EmprestimoMB implements Serializable {
                     horario.getHorarioSelecionadoFim());
 
             if (dataInicio.compareTo(dataFim) >= 0) {
-                throw new ValidacaoCampoException("A Data de Fim precisa ser superior a Data de Início");
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "The End Date must be greater than the Start Date"
+                        : "A Data de Fim precisa ser superior a Data de Início");
             }
 
             if (!empDAO.isDisponivelParaEmprestimo(dataInicio, dataFim, espaco)) {
-                throw new ValidacaoCampoException("Horário já está ocupado.");
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "The schedule is already busy."
+                        : "Horário já está ocupado.");
             }
 
             emprestimo.setDataInicio(dataInicio);
@@ -84,12 +100,17 @@ public class EmprestimoMB implements Serializable {
 
             this.exibirModal = true;
         } catch (PersistenceException | NoResultException ex) {
-            Util.mensagemErro("Servidor não encontrado!", "salvar_cad_emp");
+            Util.mensagemErro(isPaginaIngles
+                    ? "Servant not found!"
+                    : "Servidor não encontrado!",
+                    "salvar_cad_emp");
         } catch (ValidacaoCampoException ex) {
             Util.mensagemErro(ex.getMessage(), "salvar_cad_emp");
         } catch (ParseException pe) {
-            Util.mensagemErro("Problema ao converter a Data, se o problema "
-                    + "persistir entre em contato.", "salvar_cad_emp");
+            Util.mensagemErro(isPaginaIngles
+                    ? "Problem converting the Date, if the problem persists, get in touch."
+                    : "Problema ao converter a Data, se o problema persistir entre em contato.",
+                    "salvar_cad_emp");
         }
     }
 
@@ -102,7 +123,9 @@ public class EmprestimoMB implements Serializable {
         } else if (!sixCPF.isBlank()) {
             s = servDAO.buscarPorCPF(sixCPF);
         } else {
-            throw new ValidacaoCampoException("Um desses campos precisa estar preenchido: Siape ou CPF!");
+            throw new ValidacaoCampoException(isPaginaIngles
+                    ? "One of these fields must be filled in: Siape or CPF!"
+                    : "Um desses campos precisa estar preenchido: Siape ou CPF!");
         }
 
         return s;

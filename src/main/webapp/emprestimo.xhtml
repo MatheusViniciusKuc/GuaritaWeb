@@ -182,8 +182,16 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{emprestimoMB.salvar}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{emprestimoMB.cancelarEmprestimo}" />
+                            <h:commandButton 
+                                id="confirmar_cad_emp" 
+                                value="#{mensagem.Confirmar}" 
+                                action="#{emprestimoMB.salvar}" 
+                                immediate="true"/>
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{emprestimoMB.cancelarEmprestimo}" 
+                                immediate="true"/>
+                            <h:message style="color:red" for="confirmar_cad_emp" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
