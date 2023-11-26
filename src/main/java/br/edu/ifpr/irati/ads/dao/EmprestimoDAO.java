@@ -4,9 +4,7 @@ import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
 import br.edu.ifpr.irati.ads.model.Status;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -23,15 +21,13 @@ public class EmprestimoDAO extends GenericDAO<Emprestimo> {
                     + "WHERE ((:dataInicio BETWEEN e.dataInicio AND e.dataFim) "
                     + "OR (:dataFim BETWEEN e.dataInicio AND e.dataFim)) "
                     + "AND e.espaco = :espaco "
-                    + "AND e.status IN (:statusPermitidos)";
+                    + "AND e.status = :statusAgendado";
 
-            List<Status> statusPermitidos = Arrays.asList(Status.AGENDADO, Status.OCORRENCIA);
-            
             Long count = (Long) session.createQuery(hql)
                     .setParameter("dataInicio", dataInicio)
                     .setParameter("dataFim", dataFim)
                     .setParameter("espaco", espaco)
-                    .setParameterList("statusPermitidos", statusPermitidos)
+                    .setParameter("statusAgendado", Status.AGENDADO)
                     .uniqueResult();
 
             return count == 0;

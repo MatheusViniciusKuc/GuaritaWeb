@@ -29,8 +29,6 @@ public class Emprestimo implements Serializable {
     private Date dataInicio;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataFim;
-    @OneToOne
-    private Ocorrencia ocorrencia;
     @Enumerated(EnumType.STRING)
     private Status status;
     private String concluidoPor;
@@ -41,17 +39,15 @@ public class Emprestimo implements Serializable {
         this.espaco = new Espaco();
         this.dataInicio = new Date();
         this.dataFim = new Date();
-        this.ocorrencia = null;
         this.status = Status.AGENDADO;
     }
 
-    public Emprestimo(Integer id, Servidor servidor, Espaco espaco, Date dataInicio, Date dataFim, Ocorrencia ocorrencia, Status status) {
+    public Emprestimo(Integer id, Servidor servidor, Espaco espaco, Date dataInicio, Date dataFim, Status status) {
         this.id = id;
         this.servidor = servidor;
         this.espaco = espaco;
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
-        this.ocorrencia = ocorrencia;
         this.status = status;
     }
 
@@ -77,14 +73,6 @@ public class Emprestimo implements Serializable {
 
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
-    }
-
-    public Ocorrencia getOcorrencia() {
-        return ocorrencia;
-    }
-
-    public void setOcorrencia(Ocorrencia ocorrencia) {
-        this.ocorrencia = ocorrencia;
     }
 
     public Status getStatus() {

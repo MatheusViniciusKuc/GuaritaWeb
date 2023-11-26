@@ -16,10 +16,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 import org.hibernate.Session;
 
 @ManagedBean
@@ -57,11 +55,7 @@ public class EmprestimoMB implements Serializable {
     }
 
     private void verificarIdiomaPagina() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        Locale locale = facesContext.getViewRoot().getLocale();
-
-        isPaginaIngles = !(locale.getLanguage().equals("pt")
-                && locale.getCountry().equals("BR"));
+        isPaginaIngles = Util.verificarIdiomaPagina();
     }
 
     public void limparTela() {
@@ -136,6 +130,7 @@ public class EmprestimoMB implements Serializable {
             this.exibirModal = false;
             empDAO.salvar(emprestimo);
             limparTela();
+            Util.expirarSessao();
             return "index.xhtml";
         } catch (PersistenceException e) {
             Util.mensagemErro("Erro ao salvar!", "siape_emp");

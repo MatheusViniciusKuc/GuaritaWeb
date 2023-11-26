@@ -15,16 +15,18 @@ import br.edu.ifpr.irati.ads.model.Status;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
+import jakarta.persistence.NoResultException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import org.hibernate.Session;
 
 @ManagedBean
-@ViewScoped
-public class PrincipalMB implements Serializable{
+@SessionScoped
+public class PrincipalMB implements Serializable {
 
     private Session session;
     private EmprestimoDAO emprestimoDAO;
@@ -39,17 +41,21 @@ public class PrincipalMB implements Serializable{
     private Boolean exibirModalOcorrencia;
     private Boolean exibirModalCancelar;
     private Boolean perdeuChave;
+    private Boolean isPaginaIngles;
 
-    private String cpf;
+    private String siapeConfirmarSaida;
+    private String siapeOcorrencia;
+    private String siapeCancelar;
+    private String cpfOcorrencia;
     private String cpfConfirmarSaida;
-    private String siape;
 
     public PrincipalMB() {
         configurarConfiguracoesIniciais();
     }
 
     private void configurarConfiguracoesIniciais() {
-        session = HibernateUtil.getSessionFactory().openSession();
+        this.isPaginaIngles = false;
+        this.session = HibernateUtil.getSessionFactory().openSession();
         try {
             this.vigilanteDAO = new VigilanteDAO(session);
             this.servidorDAO = new ServidorDAO(session);
@@ -58,7 +64,18 @@ public class PrincipalMB implements Serializable{
         } catch (PersistenceException ex) {
             this.emprestimos = new ArrayList<>();
         }
+        filtrarEmprestimos();
         limparDados();
+    }
+
+    private void verificarIdiomaPagina() {
+        isPaginaIngles = Util.verificarIdiomaPagina();
+    }
+
+    private void filtrarEmprestimos() {
+        this.emprestimos = emprestimos.stream()
+                .filter(emp -> emp.getStatus().equals(Status.AGENDADO))
+                .collect(Collectors.toList());
     }
 
     public void limparDados() {
@@ -69,32 +86,34 @@ public class PrincipalMB implements Serializable{
         this.exibirModalServidor = false;
         this.exibirModalVigilante = false;
         this.perdeuChave = false;
-        this.cpf = "";
-        this.siape = "";
+        this.siapeConfirmarSaida = "";
         this.cpfConfirmarSaida = "";
+        this.siapeOcorrencia = "";
+        this.siapeCancelar = "";
+        this.cpfOcorrencia = "";
     }
 
     public void registrarOcorrencia() {
         try {
             Espaco espaco = this.emprestimo.getEspaco();
 
-            if (ocorrencia.getOcorrido().isBlank()) {
-                throw new ValidacaoCampoException("Deve possuir uma mensagem.");
-            }
-
             Servidor servidor = null;
             Vigilante vigilante = null;
 
             try {
-                if (!cpf.isBlank()) {
-                    vigilante = vigilanteDAO.buscarPorCPF(cpf);
-                } else if (!siape.isBlank()) {
-                    servidor = servidorDAO.buscarPorSIAPE(siape);
+                if (!cpfOcorrencia.isBlank()) {
+                    vigilante = vigilanteDAO.buscarPorCPF(cpfOcorrencia);
+                } else if (!siapeOcorrencia.isBlank()) {
+                    servidor = servidorDAO.buscarPorSIAPE(siapeOcorrencia);
                 } else {
-                    throw new ValidacaoCampoException("Informe um dos campos: Servidor ou Vigilante.");
+                    throw new ValidacaoCampoException(isPaginaIngles
+                            ? "Enter one of the fields: Server or Security Guard."
+                            : "Informe um dos campos: Servidor ou Vigilante.");
                 }
-            } catch (PersistenceException ex) {
-                throw new ValidacaoCampoException("Servidor / Vigilante não encontrado!");
+            } catch (NoResultException ex) {
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "Server / Security Guard not found!"
+                        : "Servidor / Vigilante não encontrado!");
             }
 
             EspacoDAO espacoDAO = new EspacoDAO(session);
@@ -114,54 +133,59 @@ public class PrincipalMB implements Serializable{
 
             this.exibirModalOcorrencia = false;
             limparDados();
+            filtrarEmprestimos();
         } catch (PersistenceException pe) {
-            Util.mensagemErro("Não foi possível registrar Ocorrência", "principal_ocorrencia");
-            limparDados();
+            Util.mensagemErro(isPaginaIngles 
+                    ? "Unable to register incident" 
+                    : "Não foi possível registrar Ocorrência",
+                    "principal_ocorrencia_btnConfirmar");
         } catch (ValidacaoCampoException vce) {
-            Util.mensagemErro(vce.getMessage(), "principal_ocorrencia");
+            Util.mensagemErro(vce.getMessage(),
+                    "principal_ocorrencia_btnConfirmar");
         }
     }
 
     public void cancelarEmprestimo() {
+        verificarIdiomaPagina();
         try {
-            if (siape.isBlank()) {
-                throw new ValidacaoCampoException("Informe o campo: Servidor.");
-            }
-
-            Servidor servidor = servidorDAO.buscarPorSIAPE(siape);
-
-            if (servidor == null) {
-                throw new ValidacaoCampoException("SIAPE Informado inválido ou desativado.");
-            }
+            Servidor servidor = servidorDAO.buscarPorSIAPE(siapeCancelar);
 
             if (!emprestimo.getServidor().equals(servidor)) {
-                throw new ValidacaoCampoException("O Servidor precisa ser o mesmo que fez o empréstimo.");
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "The Servant must be the same one who made the loan."
+                        : "O Servidor precisa ser o mesmo que fez o empréstimo.");
             }
 
             emprestimo.setStatus(Status.CANCELADO);
             emprestimoDAO.alterar(emprestimo);
             limparDados();
+            filtrarEmprestimos();
         } catch (PersistenceException ex) {
-            Util.mensagemErro("Não foi possível cancelar o Emprestimo",
-                    "servidor_nome_principal_cancelar");
-            limparDados();
+            Util.mensagemErro(isPaginaIngles
+                    ? "Unable to cancel loan"
+                    : "Não foi possível cancelar o Emprestimo",
+                    "principal_cancelar_btnConfirmar");
         } catch (ValidacaoCampoException vce) {
-            Util.mensagemErro(vce.getMessage(), "servidor_nome_principal_cancelar");
+            Util.mensagemErro(vce.getMessage(),
+                    "principal_cancelar_btnConfirmar");
+        } catch (NoResultException nre) {
+            Util.mensagemErro(isPaginaIngles
+                    ? "Unable to locate Servant"
+                    : "Não foi possível localizar o Servidor",
+                    "principal_cancelar_btnConfirmar");
         }
     }
 
     public void concluirEmprestimo() {
+        verificarIdiomaPagina();
         try {
             Vigilante vigilante = null;
             Servidor servidor = null;
 
             if (!cpfConfirmarSaida.isBlank()) {
                 vigilante = vigilanteDAO.buscarPorCPF(cpfConfirmarSaida);
-            } else if (!siape.isBlank()) {
-                servidor = servidorDAO.buscarPorSIAPE(siape);
-            } else {
-                throw new ValidacaoCampoException("Preenchar o campo para "
-                        + "conseguir concluir o empréstimo.");
+            } else if (!siapeConfirmarSaida.isBlank()) {
+                servidor = servidorDAO.buscarPorSIAPE(siapeConfirmarSaida);
             }
 
             if (vigilante != null) {
@@ -169,26 +193,31 @@ public class PrincipalMB implements Serializable{
                 emprestimo.setConcluidoPor("VIGILANTE - " + vigilante.getDadosPessoais().getNome());
             } else if (servidor != null) {
                 if (!emprestimo.getServidor().equals(servidor)) {
-                    throw new ValidacaoCampoException("O Servidor precisa ser o "
-                            + "mesmo que fez o empréstimo.");
+                    throw new ValidacaoCampoException(isPaginaIngles
+                            ? "The Servant must be the same one who made the loan."
+                            : "O Servidor precisa ser o mesmo que fez o empréstimo.");
                 }
 
                 emprestimo.setStatus(Status.REALIZADO);
                 emprestimo.setConcluidoPor("SERVIDOR - " + servidor.getDadosPessoais().getNome());
-            } else {
-                throw new ValidacaoCampoException("Não foi possível localizar "
-                        + "o responsável pela conclisão do empréstimo.");
             }
 
             emprestimoDAO.alterar(emprestimo);
             limparDados();
+            filtrarEmprestimos();
         } catch (ValidacaoCampoException vce) {
             Util.mensagemErro(vce.getMessage(),
-                    "servidor_nome_principal_cancelar");
+                    "principal_liberarServ_btnConfirmar");
         } catch (PersistenceException ex) {
-            Util.mensagemErro("Não foi possível concluir o Emprestimo",
-                    "servidor_nome_principal_concluir");
-            limparDados();
+            Util.mensagemErro(isPaginaIngles
+                    ? "Unable to complete loan"
+                    : "Não foi possível concluir o Emprestimo",
+                    "principal_liberarServ_btnConfirmar");
+        } catch (NoResultException ex) {
+            Util.mensagemErro(isPaginaIngles
+                    ? "Unable to locate the person responsible for completing the loan"
+                    : "Não foi possível localizar o responsável pela conclusão do empréstimo",
+                    "principal_liberarServ_btnConfirmar");
         }
     }
 
@@ -252,20 +281,12 @@ public class PrincipalMB implements Serializable{
         this.ocorrencia = ocorrencia;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setSiapeConfirmarSaida(String siapeConfirmarSaida) {
+        this.siapeConfirmarSaida = siapeConfirmarSaida;
     }
 
-    public void setSiape(String siape) {
-        this.siape = siape;
-    }
-
-    public String getSiape() {
-        return siape;
-    }
-
-    public String getCpf() {
-        return cpf;
+    public String getSiapeConfirmarSaida() {
+        return siapeConfirmarSaida;
     }
 
     public void setPerdeuChave(Boolean perdeuChave) {
@@ -282,6 +303,30 @@ public class PrincipalMB implements Serializable{
 
     public String getCpfConfirmarSaida() {
         return cpfConfirmarSaida;
+    }
+
+    public String getSiapeOcorrencia() {
+        return siapeOcorrencia;
+    }
+
+    public void setSiapeOcorrencia(String siapeOcorrencia) {
+        this.siapeOcorrencia = siapeOcorrencia;
+    }
+
+    public void setCpfOcorrencia(String cpfOcorrencia) {
+        this.cpfOcorrencia = cpfOcorrencia;
+    }
+
+    public String getCpfOcorrencia() {
+        return cpfOcorrencia;
+    }
+
+    public void setSiapeCancelar(String siapeCancelar) {
+        this.siapeCancelar = siapeCancelar;
+    }
+
+    public String getSiapeCancelar() {
+        return siapeCancelar;
     }
 
 }
