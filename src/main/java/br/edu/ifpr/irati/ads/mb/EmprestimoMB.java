@@ -81,7 +81,7 @@ public class EmprestimoMB implements Serializable {
                         : "A Data de Fim precisa ser superior a Data de Início");
             }
 
-            if (!empDAO.isDisponivelParaEmprestimo(dataInicio, dataFim, espaco)) {
+            if (!empDAO.isDisponivelEmprestimo(dataInicio, dataFim, espaco)) {
                 throw new ValidacaoCampoException(isPaginaIngles
                         ? "The schedule is already busy."
                         : "Horário já está ocupado.");

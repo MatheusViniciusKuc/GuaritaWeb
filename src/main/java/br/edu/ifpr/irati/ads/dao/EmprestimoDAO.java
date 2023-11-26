@@ -14,12 +14,12 @@ public class EmprestimoDAO extends GenericDAO<Emprestimo> {
         super(Emprestimo.class, session);
     }
 
-    public boolean isDisponivelParaEmprestimo(Date dataInicio, Date dataFim,
+    public boolean isDisponivelEmprestimo(Date dataInicio, Date dataFim,
             Espaco espaco) throws PersistenceException {
         try {
             String hql = "SELECT COUNT(*) FROM Emprestimo e "
-                    + "WHERE ((:dataInicio BETWEEN e.dataInicio AND e.dataFim) "
-                    + "OR (:dataFim BETWEEN e.dataInicio AND e.dataFim)) "
+                    + "WHERE ((:dataInicio < e.dataFim AND :dataFim > e.dataInicio) "
+                    + "OR (:dataInicio <= e.dataInicio AND :dataFim >= e.dataFim)) "
                     + "AND e.espaco = :espaco "
                     + "AND e.status = :statusAgendado";
 
