@@ -16,7 +16,9 @@
 
     <h:body>
         <h:form>
-            <h:commandLink action="#{paginaMB.visitarPagina('/index')}">
+            <h:commandLink 
+                action="#{paginaMB.visitarPagina('/index')}"
+                immediate="">
                 <button class="ui-button ui-widget ui-corner-all">
                     Voltar
                 </button>
@@ -28,21 +30,38 @@
                 </h3>
 
                 <div style="padding: 3px; margin: 3px">
-                    <h:panelGroup>
-                        <h:panelGrid columns="2">
+                    <h:panelGroup id="filtros_relatorio_emprestimo">
+                        <h:panelGrid columns="3">
                             <h:outputText value="Data Inicio: " />
-                            <h:inputText value="#{relatorioEmprestimoMB.dateInicioFiltro}" size="6">
+                            <h:inputText 
+                                value="#{relatorioEmprestimoMB.dateInicioFiltro}"
+                                size="7" 
+                                id="filtro_relatorio_emprestimo_dataIni"
+                                maxlength="10"
+                                converterMessage="#{mensagem.DataInvalidaddMMyyyy}">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
+                            <h:message style="color:red" for="filtro_relatorio_emprestimo_dataIni" />
 
                             <h:outputText value="Data Final: " />
-                            <h:inputText value="#{relatorioEmprestimoMB.dateFinalFiltro}" size="6">
+                            <h:inputText 
+                                value="#{relatorioEmprestimoMB.dateFinalFiltro}" 
+                                size="7" 
+                                id="filtro_relatorio_emprestimo_dataFim"
+                                maxlength="10"
+                                converterMessage="#{mensagem.DataInvalidaddMMyyyy}">
                                 <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
                             </h:inputText>
+                            <h:message style="color:red" for="filtro_relatorio_emprestimo_dataFim" />
 
-                            <h:commandLink action="#{relatorioEmprestimoMB.filtrar}">
-                                Filtrar
+                            <h:commandLink 
+                                id="filtro_relatorio_emprestimo_btnFiltrar"
+                                action="#{relatorioEmprestimoMB.filtrarRelatorio}">
+                                <button class="ui-button ui-widget ui-corner-all">
+                                    Filtrar
+                                </button>
                             </h:commandLink>
+                            <h:message style="color:red" for="filtro_relatorio_emprestimo_btnFiltrar" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
