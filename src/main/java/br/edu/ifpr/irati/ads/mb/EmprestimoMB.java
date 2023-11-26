@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import org.hibernate.Session;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class EmprestimoMB implements Serializable {
 
     private Session session;
@@ -33,8 +33,8 @@ public class EmprestimoMB implements Serializable {
     private Emprestimo emprestimo;
     private String sixCPF;
     private Boolean exibirModal;
-    private List<Emprestimo> emprestimos;
     private Horario horario;
+    private Boolean isEspacoDisponivel;
 
     public EmprestimoMB() {
         configurarConfiguracoesIniciais();
@@ -46,14 +46,18 @@ public class EmprestimoMB implements Serializable {
             empDAO = new EmprestimoDAO(session);
             espDAO = new EspacoDAO(session);
             espacos = espDAO.buscarEspacosDisponiveis();
-            emprestimos = empDAO.buscarTodos();
+            isEspacoDisponivel = true;
         } catch (PersistenceException ex) {
-            espacos = new ArrayList<>();
-            emprestimos = new ArrayList<>();
+            isEspacoDisponivel = false;
         }
+        limparTela();
+    }
+
+    public void limparTela() {
         emprestimo = new Emprestimo();
-        exibirModal = false;
-        horario = new Horario();
+        this.exibirModal = false;
+        this.sixCPF = "";
+        this.horario = new Horario();
     }
 
     public void configurarValores() {
@@ -80,12 +84,12 @@ public class EmprestimoMB implements Serializable {
 
             this.exibirModal = true;
         } catch (PersistenceException | NoResultException ex) {
-            Util.mensagemErro("Servidor não encontrado!", "siape_emp");
+            Util.mensagemErro("Servidor não encontrado!", "salvar_cad_emp");
         } catch (ValidacaoCampoException ex) {
-            Util.mensagemErro(ex.getMessage(), "siape_emp");
+            Util.mensagemErro(ex.getMessage(), "salvar_cad_emp");
         } catch (ParseException pe) {
             Util.mensagemErro("Problema ao converter a Data, se o problema "
-                    + "persistir entre em contato.", "siape_emp");
+                    + "persistir entre em contato.", "salvar_cad_emp");
         }
     }
 
@@ -114,13 +118,6 @@ public class EmprestimoMB implements Serializable {
             Util.mensagemErro("Erro ao salvar!", "siape_emp");
             return "emprestimo.xhtml";
         }
-    }
-
-    public void limparTela() {
-        emprestimo = new Emprestimo();
-        this.exibirModal = false;
-        this.sixCPF = "";
-        this.horario = new Horario();
     }
 
     public void cancelarEmprestimo() {
@@ -162,16 +159,16 @@ public class EmprestimoMB implements Serializable {
         return exibirModal;
     }
 
-    public List<Emprestimo> getEmprestimos() {
-        return emprestimos;
-    }
-
     public void setHorario(Horario horario) {
         this.horario = horario;
     }
 
     public Horario getHorario() {
         return horario;
+    }
+
+    public Boolean getIsEspacoDisponivel() {
+        return isEspacoDisponivel;
     }
 
 }
