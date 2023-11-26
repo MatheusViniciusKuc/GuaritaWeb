@@ -5,7 +5,6 @@ import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
-import jakarta.persistence.Query;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,9 +18,10 @@ import org.hibernate.Session;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioEmprestimoMB implements Serializable{
+public class RelatorioEmprestimoMB implements Serializable {
 
     private Session session;
+    private EmprestimoDAO dao;
     private List<Emprestimo> emprestimos;
     private Boolean ordenacaoCrescente;
     private Date dateInicioFiltro;
@@ -31,39 +31,23 @@ public class RelatorioEmprestimoMB implements Serializable{
         this.ordenacaoCrescente = true;
         try {
             session = HibernateUtil.getSessionFactory().openSession();
-            EmprestimoDAO dao = new EmprestimoDAO(session);
+            dao = new EmprestimoDAO(session);
             this.emprestimos = dao.buscarTodos();
         } catch (PersistenceException ex) {
             this.emprestimos = new ArrayList<>();
         }
     }
 
-    public void filtrar() {
+    public void filtrarRelatorio() {
         try {
-            String hql = "FROM Emprestimo e "
-                    + "WHERE 1 = 1";
-
-            if (dateInicioFiltro != null) {
-                hql += " AND e.dataInicio >= :dataInicio";
-            }
-            if (dateFinalFiltro != null) {
-                hql += " AND e.dataFim <= :dataFim";
-            }
-
-            Query query = session.createQuery(hql);
-
-            if (dateInicioFiltro != null) {
-                this.dateInicioFiltro = Util.configurarDate(dateInicioFiltro, "01:00");
-                query.setParameter("dataInicio", dateInicioFiltro);
-            }
-            if (dateFinalFiltro != null) {
-                this.dateFinalFiltro = Util.configurarDate(dateFinalFiltro, "23:00");
-                query.setParameter("dataFim", dateFinalFiltro);
-            }
-
-            this.emprestimos = query.getResultList();
+            this.emprestimos = dao.filtrarRelatorio(dateInicioFiltro, dateFinalFiltro);
         } catch (ParseException pe) {
-            pe.printStackTrace();
+            Util.mensagemErro("Houve um problema ao converter a Data, "
+                    + "se persistir entre em contato",
+                    "filtro_relatorio_emprestimo_btnFiltrar");
+        } catch (PersistenceException pe) {
+            Util.mensagemErro("Não foi possível Filtrar",
+                    "filtro_relatorio_emprestimo_btnFiltrar");
         }
     }
 

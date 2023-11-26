@@ -3,8 +3,10 @@ package br.edu.ifpr.irati.ads.dao;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
-import br.edu.ifpr.irati.ads.model.Status;
-import java.util.Arrays;
+import br.edu.ifpr.irati.ads.model.enums.Status;
+import br.edu.ifpr.irati.ads.util.Util;
+import jakarta.persistence.Query;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import org.hibernate.HibernateException;
@@ -16,27 +18,55 @@ public class EmprestimoDAO extends GenericDAO<Emprestimo> {
         super(Emprestimo.class, session);
     }
 
-    public boolean isDisponivelParaEmprestimo(Date dataInicio, Date dataFim,
+    public boolean isDisponivelEmprestimo(Date dataInicio, Date dataFim,
             Espaco espaco) throws PersistenceException {
         try {
             String hql = "SELECT COUNT(*) FROM Emprestimo e "
-                    + "WHERE ((:dataInicio BETWEEN e.dataInicio AND e.dataFim) "
-                    + "OR (:dataFim BETWEEN e.dataInicio AND e.dataFim)) "
+                    + "WHERE ((:dataInicio < e.dataFim AND :dataFim > e.dataInicio) "
+                    + "OR (:dataInicio <= e.dataInicio AND :dataFim >= e.dataFim)) "
                     + "AND e.espaco = :espaco "
-                    + "AND e.status IN (:statusPermitidos)";
+                    + "AND e.status = :statusAgendado";
 
-            List<Status> statusPermitidos = Arrays.asList(Status.AGENDADO, Status.OCORRENCIA);
-            
             Long count = (Long) session.createQuery(hql)
                     .setParameter("dataInicio", dataInicio)
                     .setParameter("dataFim", dataFim)
                     .setParameter("espaco", espaco)
-                    .setParameterList("statusPermitidos", statusPermitidos)
+                    .setParameter("statusAgendado", Status.AGENDADO)
                     .uniqueResult();
 
             return count == 0;
         } catch (HibernateException e) {
             throw new PersistenceException(e.getMessage());
+        }
+    }
+
+    public List<Emprestimo> filtrarRelatorio(Date dateInicioFiltro, Date dateFinalFiltro)
+            throws PersistenceException, ParseException {
+        try {
+            String hql = "FROM Emprestimo e "
+                    + "WHERE 1 = 1";
+
+            if (dateInicioFiltro != null) {
+                hql += " AND e.dataInicio >= :dataInicio";
+            }
+            if (dateFinalFiltro != null) {
+                hql += " AND e.dataFim <= :dataFim";
+            }
+
+            Query query = session.createQuery(hql);
+
+            if (dateInicioFiltro != null) {
+                dateInicioFiltro = Util.configurarDate(dateInicioFiltro, "01:00");
+                query.setParameter("dataInicio", dateInicioFiltro);
+            }
+            if (dateFinalFiltro != null) {
+                dateFinalFiltro = Util.configurarDate(dateFinalFiltro, "23:00");
+                query.setParameter("dataFim", dateFinalFiltro);
+            }
+
+            return query.getResultList();
+        } catch (HibernateException he) {
+            throw new PersistenceException(he.getMessage());
         }
     }
 }

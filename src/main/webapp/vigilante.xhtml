@@ -16,7 +16,9 @@
     <h:body>
         <h:form>
             <div>
-                <h:commandLink action="faces/index.xhtml" immediate="true">
+                <h:commandLink 
+                    action="#{paginaMB.visitarPagina('faces/index')}"
+                    immediate="true">
                     <button class="ui-button ui-widget ui-corner-all">
                         Voltar
                     </button>
@@ -50,6 +52,7 @@
 
                             <h:outputLabel value="CPF: "/>              
                             <h:inputText 
+                                disabled="#{vigilanteMB.disableInputText}"
                                 value="#{vigilanteMB.vigilante.dadosPessoais.cpf}"
                                 id="cpf_cad_vig"
                                 onkeypress="return permitirApenasNumeros(event);"
@@ -69,6 +72,7 @@
 
                             <h:outputLabel value="E-mail: "/>              
                             <h:inputText 
+                                disabled="#{vigilanteMB.disableInputText}"
                                 value="#{vigilanteMB.vigilante.dadosPessoais.email}"
                                 id="email_cad_vig"
                                 required="true"

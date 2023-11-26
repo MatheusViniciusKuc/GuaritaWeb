@@ -7,22 +7,21 @@ import br.edu.ifpr.irati.ads.exception.PersistenceException;
 import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Emprestimo;
 import br.edu.ifpr.irati.ads.model.Espaco;
-import br.edu.ifpr.irati.ads.model.Horario;
+import br.edu.ifpr.irati.ads.util.Horario;
 import br.edu.ifpr.irati.ads.model.Servidor;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
 import jakarta.persistence.NoResultException;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import org.hibernate.Session;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class EmprestimoMB implements Serializable {
 
     private Session session;
@@ -33,8 +32,9 @@ public class EmprestimoMB implements Serializable {
     private Emprestimo emprestimo;
     private String sixCPF;
     private Boolean exibirModal;
-    private List<Emprestimo> emprestimos;
     private Horario horario;
+    private Boolean isEspacoDisponivel;
+    private Boolean isPaginaIngles;
 
     public EmprestimoMB() {
         configurarConfiguracoesIniciais();
@@ -46,17 +46,27 @@ public class EmprestimoMB implements Serializable {
             empDAO = new EmprestimoDAO(session);
             espDAO = new EspacoDAO(session);
             espacos = espDAO.buscarEspacosDisponiveis();
-            emprestimos = empDAO.buscarTodos();
+            isEspacoDisponivel = true;
         } catch (PersistenceException ex) {
-            espacos = new ArrayList<>();
-            emprestimos = new ArrayList<>();
+            isEspacoDisponivel = false;
         }
+        isPaginaIngles = false;
+        limparTela();
+    }
+
+    private void verificarIdiomaPagina() {
+        isPaginaIngles = Util.verificarIdiomaPagina();
+    }
+
+    public void limparTela() {
         emprestimo = new Emprestimo();
-        exibirModal = false;
-        horario = new Horario();
+        this.exibirModal = false;
+        this.sixCPF = "";
+        this.horario = new Horario();
     }
 
     public void configurarValores() {
+        verificarIdiomaPagina();
         try {
             Servidor s = localizarServidor();
 
@@ -66,11 +76,15 @@ public class EmprestimoMB implements Serializable {
                     horario.getHorarioSelecionadoFim());
 
             if (dataInicio.compareTo(dataFim) >= 0) {
-                throw new ValidacaoCampoException("A Data de Fim precisa ser superior a Data de Início");
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "The End Date must be greater than the Start Date"
+                        : "A Data de Fim precisa ser superior a Data de Início");
             }
 
-            if (!empDAO.isDisponivelParaEmprestimo(dataInicio, dataFim, espaco)) {
-                throw new ValidacaoCampoException("Horário já está ocupado.");
+            if (!empDAO.isDisponivelEmprestimo(dataInicio, dataFim, espaco)) {
+                throw new ValidacaoCampoException(isPaginaIngles
+                        ? "The schedule is already busy."
+                        : "Horário já está ocupado.");
             }
 
             emprestimo.setDataInicio(dataInicio);
@@ -80,12 +94,17 @@ public class EmprestimoMB implements Serializable {
 
             this.exibirModal = true;
         } catch (PersistenceException | NoResultException ex) {
-            Util.mensagemErro("Servidor não encontrado!", "siape_emp");
+            Util.mensagemErro(isPaginaIngles
+                    ? "Servant not found!"
+                    : "Servidor não encontrado!",
+                    "salvar_cad_emp");
         } catch (ValidacaoCampoException ex) {
-            Util.mensagemErro(ex.getMessage(), "siape_emp");
+            Util.mensagemErro(ex.getMessage(), "salvar_cad_emp");
         } catch (ParseException pe) {
-            Util.mensagemErro("Problema ao converter a Data, se o problema "
-                    + "persistir entre em contato.", "siape_emp");
+            Util.mensagemErro(isPaginaIngles
+                    ? "Problem converting the Date, if the problem persists, get in touch."
+                    : "Problema ao converter a Data, se o problema persistir entre em contato.",
+                    "salvar_cad_emp");
         }
     }
 
@@ -98,7 +117,9 @@ public class EmprestimoMB implements Serializable {
         } else if (!sixCPF.isBlank()) {
             s = servDAO.buscarPorCPF(sixCPF);
         } else {
-            throw new ValidacaoCampoException("Um desses campos precisa estar preenchido: Siape ou CPF!");
+            throw new ValidacaoCampoException(isPaginaIngles
+                    ? "One of these fields must be filled in: Siape or CPF!"
+                    : "Um desses campos precisa estar preenchido: Siape ou CPF!");
         }
 
         return s;
@@ -109,18 +130,12 @@ public class EmprestimoMB implements Serializable {
             this.exibirModal = false;
             empDAO.salvar(emprestimo);
             limparTela();
+            Util.expirarSessao();
             return "index.xhtml";
         } catch (PersistenceException e) {
             Util.mensagemErro("Erro ao salvar!", "siape_emp");
             return "emprestimo.xhtml";
         }
-    }
-
-    public void limparTela() {
-        emprestimo = new Emprestimo();
-        this.exibirModal = false;
-        this.sixCPF = "";
-        this.horario = new Horario();
     }
 
     public void cancelarEmprestimo() {
@@ -162,16 +177,16 @@ public class EmprestimoMB implements Serializable {
         return exibirModal;
     }
 
-    public List<Emprestimo> getEmprestimos() {
-        return emprestimos;
-    }
-
     public void setHorario(Horario horario) {
         this.horario = horario;
     }
 
     public Horario getHorario() {
         return horario;
+    }
+
+    public Boolean getIsEspacoDisponivel() {
+        return isEspacoDisponivel;
     }
 
 }

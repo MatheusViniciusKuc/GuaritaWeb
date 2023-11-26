@@ -12,33 +12,28 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.0/jquery.mask.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <script>
-            $(document).ready(function () {
-                var $campoData = $("#dataIni");
-                $campoData.mask('00/00/0000 00:00', {reverse: false});
-
-                var $campoData = $("#dataFim");
-                $campoData.mask('00/00/0000 00:00', {reverse: false});
-            });
-        </script>
     </h:head>
-    <h:body onload="#{flash.script}">
+    <h:body>
         <h:form>
-            <h:commandLink action="faces/index.xhtml">
+            <h:commandLink 
+                action="#{paginaMB.visitarPagina('faces/index')}"
+                immediate="true">
                 <button class="ui-button ui-widget ui-corner-all">
-                    #{mensagem.Voltar}
+                    Voltar
                 </button>
             </h:commandLink>
 
             <div align="right">
                 &nbsp;&nbsp;
-                <h:commandLink action="#{idiomaMB.ingles}"                                        
-                               immediate="true">
+                <h:commandLink 
+                    action="#{idiomaMB.ingles}"                                        
+                    immediate="true">
                     <h:graphicImage value="/imagens/us_32.png" width="24"/>
                 </h:commandLink>
                 &nbsp;&nbsp;
-                <h:commandLink action="#{idiomaMB.portugues}"
-                               immediate="true">
+                <h:commandLink 
+                    action="#{idiomaMB.portugues}"
+                    immediate="true">
                     <h:graphicImage value="/imagens/brasil_32.png" width="24"/>
                 </h:commandLink>
             </div>
@@ -46,55 +41,123 @@
             <div style="margin: 2% 4%; border-style: solid">
                 <div style="margin: 0 auto;">
                     <h2 style="text-align: center">#{mensagem.EmprestimoDeLaboratorio}</h2>
-                    <h:panelGroup>
-                        <h:panelGrid columns="3">
-                            <h:outputText value="#{mensagem.Servidor} (SIAPE): "/>
-                            <h:inputText id="siape_emp" value="#{emprestimoMB.emprestimo.servidor.siape}" size="30"/>
-                            <h:message for="siape_emp" />
 
-                            <h:outputText value="#{mensagem.Servidor} (6 #{mensagem.PrimeirosDigitos} CPF): "/>
-                            <h:inputText id="cpf_emp" value="#{emprestimoMB.sixCPF}" size="30"/>
-                            <h:message for="cpf_emp" />
-                        </h:panelGrid>
+                    <div style="display: #{!emprestimoMB.isEspacoDisponivel ? 'block' : 'none'}; text-align: center;">
+                        <h4>
+                            #{mensagem.NaoHaNenhumEspacoDisponivelParaEmprestar}
+                        </h4>
+                    </div>
 
-                        <h:panelGrid columns="2">
-                            <h:outputText value="#{mensagem.Laboratorio}: "/>
-                            <h:selectOneMenu id="labs" value="#{emprestimoMB.espaco}" style="width: 110%" converter="espacoConverter">
-                                <f:selectItems value="#{emprestimoMB.espacos}" var="esp" itemLabel="#{esp}" itemValue="#{esp}" />
-                            </h:selectOneMenu>
-                        </h:panelGrid>
+                    <div style="display: #{emprestimoMB.isEspacoDisponivel ? 'block' : 'none'};">
+                        <h:panelGroup id="panel_emprestimo">
+                            <h:panelGrid columns="3">
+                                <h:outputText value="#{mensagem.Servidor} (SIAPE): "/>
+                                <h:inputText 
+                                    id="siape_cad_emp" 
+                                    value="#{emprestimoMB.emprestimo.servidor.siape}" 
+                                    size="10"
+                                    maxlength="7"
+                                    onkeypress="return permitirApenasNumeros(event)">
+                                    <f:validateLength minimum = "7" maximum = "7"/>
+                                </h:inputText>
+                                <h:message style="color:red" for="siape_cad_emp" />
 
-                        <h:panelGrid columns="4">
-                            <h:outputText value="#{mensagem.DataInicio}: " />
-                            <h:inputText value="#{emprestimoMB.horario.dataInicio}" size="7" id="dataIni">
-                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
-                            </h:inputText>
+                                <h:outputText value="#{mensagem.Servidor} (6 #{mensagem.PrimeirosDigitos} CPF): "/>
+                                <h:inputText 
+                                    id="cpf_cad_emp" 
+                                    value="#{emprestimoMB.sixCPF}" 
+                                    size="10"
+                                    maxlength="6"
+                                    onkeypress="return permitirApenasNumeros(event)">
+                                    <f:validateLength minimum = "6" maximum = "6"/>
+                                </h:inputText>
+                                <h:message style="color:red" for="cpf_cad_emp" />
 
-                            <h:outputText value="#{mensagem.HorarioInicio}: "/>
-                            <h:selectOneMenu id="horaIni" value="#{emprestimoMB.horario.horarioSelecionadoIni}" style="width: 100%" >
-                                <f:selectItems value="#{emprestimoMB.horario.horariosInicial}" var="horaIni" itemLabel="#{horaIni}" itemValue="#{horaIni}" />
-                            </h:selectOneMenu>
+                                <h:outputText value="#{mensagem.Laboratorio}: "/>
+                                <h:selectOneMenu 
+                                    id="labs_cad_emp" 
+                                    value="#{emprestimoMB.espaco}" 
+                                    style="width: 110%" 
+                                    converter="espacoConverter"
+                                    required="true">
+                                    <f:selectItems 
+                                        value="#{emprestimoMB.espacos}" 
+                                        var="esp" 
+                                        itemLabel="#{esp}" 
+                                        itemValue="#{esp}" />
+                                </h:selectOneMenu>
+                                <h:message style="color:red" for="labs_cad_emp" />
+                            </h:panelGrid>
 
-                            <h:outputText value="#{mensagem.HorarioFinal}: " />
-                            <h:inputText value="#{emprestimoMB.horario.dataFinal}" size="7" id="dataFim">
-                                <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
-                            </h:inputText>
+                            <h:panelGrid columns="6">
+                                <h:outputText value="#{mensagem.DataInicio}: " />
+                                <h:inputText 
+                                    value="#{emprestimoMB.horario.dataInicio}" 
+                                    size="7" 
+                                    id="dataIni_cad_emp"
+                                    maxlength="10"
+                                    required="true"
+                                    requiredMessage="#{mensagem.PrecisaInformarUmaData}"
+                                    converterMessage="#{mensagem.DataInvalidaddMMyyyy}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
+                                </h:inputText>
+                                <h:message style="color:red" for="dataIni_cad_emp" />
 
-                            <h:outputText value="#{mensagem.HorarioFinal}: "/>
-                            <h:selectOneMenu id="horaFim" value="#{emprestimoMB.horario.horarioSelecionadoFim}" style="width: 100%" >
-                                <f:selectItems value="#{emprestimoMB.horario.horariosFim}" var="horaFim" itemLabel="#{horaFim}" itemValue="#{horaFim}" />
-                            </h:selectOneMenu>
+                                <h:outputText value="#{mensagem.HorarioInicio}: "/>
+                                <h:selectOneMenu 
+                                    id="horaIni_cad_emp" 
+                                    value="#{emprestimoMB.horario.horarioSelecionadoIni}" 
+                                    style="width: 100%"
+                                    required="true">
+                                    <f:selectItems 
+                                        value="#{emprestimoMB.horario.horariosInicial}" 
+                                        var="horaIni" 
+                                        itemLabel="#{horaIni}" 
+                                        itemValue="#{horaIni}" />
+                                </h:selectOneMenu>
+                                <h:message style="color:red" for="horaIni_cad_emp" />
 
-                            <h:commandButton 
-                                style="margin-top: 5px; margin-bottom: 5px" 
-                                action="#{emprestimoMB.configurarValores}" 
-                                value="#{mensagem.Salvar}" />
-                            <h:commandButton 
-                                style="margin-top: 5px; margin-bottom: 5px" 
-                                action="#{emprestimoMB.limparTela}" 
-                                value="#{mensagem.Cancelar}" />
-                        </h:panelGrid>
-                    </h:panelGroup>
+                                <h:outputText value="#{mensagem.HorarioFinal}: " />
+                                <h:inputText 
+                                    value="#{emprestimoMB.horario.dataFinal}" 
+                                    size="7" 
+                                    id="dataFim_cad_emp"
+                                    maxlength="10"
+                                    required="true"
+                                    requiredMessage="#{mensagem.PrecisaInformarUmaData}"
+                                    converterMessage="#{mensagem.DataInvalidaddMMyyyy}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="GMT-03:00"/>
+                                </h:inputText>
+                                <h:message style="color:red" for="dataFim_cad_emp" />
+
+                                <h:outputText value="#{mensagem.HorarioFinal}: "/>
+                                <h:selectOneMenu 
+                                    id="horaFim_cad_emp" 
+                                    value="#{emprestimoMB.horario.horarioSelecionadoFim}" 
+                                    style="width: 100%" 
+                                    required="true">
+                                    <f:selectItems 
+                                        value="#{emprestimoMB.horario.horariosFim}" 
+                                        var="horaFim" 
+                                        itemLabel="#{horaFim}" 
+                                        itemValue="#{horaFim}" />
+                                </h:selectOneMenu>
+                                <h:message style="color:red" for="horaFim_cad_emp" />
+
+                                <h:commandButton 
+                                    style="margin-top: 5px; margin-bottom: 5px" 
+                                    action="#{emprestimoMB.configurarValores}" 
+                                    value="#{mensagem.Salvar}" 
+                                    id="salvar_cad_emp"/>
+                                <h:commandButton 
+                                    style="margin-top: 5px; margin-bottom: 5px" 
+                                    action="#{emprestimoMB.limparTela}" 
+                                    value="#{mensagem.Cancelar}"
+                                    immediate="true"/>
+                                <h:message style="color:red" for="salvar_cad_emp" />
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </div>
                 </div>
             </div>
 
@@ -121,12 +184,29 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm" timeZone="GMT-03:00"/>
                             </h:inputText>
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{emprestimoMB.salvar}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{emprestimoMB.cancelarEmprestimo}" />
+                            <h:commandButton 
+                                id="confirmar_cad_emp" 
+                                value="#{mensagem.Confirmar}" 
+                                action="#{emprestimoMB.salvar}" 
+                                immediate="true"/>
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{emprestimoMB.cancelarEmprestimo}" 
+                                immediate="true"/>
+                            <h:message style="color:red" for="confirmar_cad_emp" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
             </div>
         </h:form>
+
+        <script>
+            function permitirApenasNumeros(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[0-9]/.test(char);
+            }
+        </script>
     </h:body>
 </html>

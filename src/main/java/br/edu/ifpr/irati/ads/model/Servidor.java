@@ -17,7 +17,7 @@ public class Servidor implements Serializable {
             sequenceName = "SEQ_SERV", allocationSize = 1, initialValue = 1)
     private Integer id;
     @NotBlank
-    @Column(name = "siape", nullable = false)
+    @Column(name = "siape", nullable = false, unique = true)
     private String siape;
     @Embedded
     private DadosPessoais dadosPessoais;

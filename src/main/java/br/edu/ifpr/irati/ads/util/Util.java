@@ -1,14 +1,24 @@
 package br.edu.ifpr.irati.ads.util;
 
-import br.edu.ifpr.irati.ads.model.Modal;
+import br.edu.ifpr.irati.ads.model.enums.Modal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 public class Util {
+
+    public static Boolean verificarIdiomaPagina() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        Locale locale = facesContext.getViewRoot().getLocale();
+
+        return !(locale.getLanguage().equals("pt")
+                && locale.getCountry().equals("BR"));
+    }
 
     public static void mensagemErro(String mensagem, String campo) {
         FacesMessage mensagemFM = new FacesMessage(FacesMessage.SEVERITY_ERROR, mensagem, null);
@@ -38,6 +48,15 @@ public class Util {
         cal.set(Calendar.SECOND, 0);
 
         return cal.getTime();
+    }
+
+    public static void expirarSessao() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
     }
 
 }

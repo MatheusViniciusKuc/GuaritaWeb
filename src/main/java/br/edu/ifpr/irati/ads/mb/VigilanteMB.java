@@ -2,6 +2,7 @@ package br.edu.ifpr.irati.ads.mb;
 
 import br.edu.ifpr.irati.ads.dao.VigilanteDAO;
 import br.edu.ifpr.irati.ads.exception.PersistenceException;
+import br.edu.ifpr.irati.ads.exception.ValidacaoCampoException;
 import br.edu.ifpr.irati.ads.model.Vigilante;
 import br.edu.ifpr.irati.ads.util.HibernateUtil;
 import br.edu.ifpr.irati.ads.util.Util;
@@ -21,6 +22,7 @@ public class VigilanteMB implements Serializable {
     private Vigilante vigilante;
     private List<Vigilante> vigilantes;
     private Boolean exibirModalExcluir;
+    private Boolean disableInputText;
 
     public VigilanteMB() {
         configurarConfiguracoesIniciais();
@@ -40,6 +42,12 @@ public class VigilanteMB implements Serializable {
     public void salvarVigilante() {
         try {
             if (vigilante.getId() == null || vigilante.getId() == 0) {
+                if (vigilanteDAO.existeCpf(vigilante.getDadosPessoais().getCpf()) != null) {
+                    throw new ValidacaoCampoException("Esse CPF já está em uso.");
+                }
+                if (vigilanteDAO.existeEmail(vigilante.getDadosPessoais().getEmail()) != null) {
+                    throw new ValidacaoCampoException("Esse E-mail já está em uso.");
+                }
                 vigilanteDAO.salvar(vigilante);
                 this.vigilantes.add(vigilante);
             } else {
@@ -49,6 +57,8 @@ public class VigilanteMB implements Serializable {
             cancelarVigilante();
         } catch (PersistenceException ex) {
             Util.mensagemErro("Não foi possível salvar.", "salvar_cad_vig");
+        } catch (ValidacaoCampoException ex) {
+            Util.mensagemErro(ex.getMessage(), "salvar_cad_vig");
         }
     }
 
@@ -94,6 +104,10 @@ public class VigilanteMB implements Serializable {
 
     public Boolean getExibirModalExcluir() {
         return exibirModalExcluir;
+    }
+
+    public Boolean getDisableInputText() {
+        return !(vigilante.getId() == null || vigilante.getId() == 0);
     }
 
 }

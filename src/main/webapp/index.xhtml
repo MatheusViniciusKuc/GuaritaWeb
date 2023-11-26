@@ -6,11 +6,12 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Guarita Web</title>
-        <link rel="stylesheet" href="https://cndjs.cloudflare.com/ajax/libs/font-awesome.min.css"/>        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>        
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </h:head>
     <h:body>   
         <h:form>
@@ -33,7 +34,9 @@
 
             <div style="margin: 10px">
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
-                    <h:commandLink action="servidor.xhtml">
+                    <h:commandLink 
+                        action="#{paginaMB.visitarPagina('servidor')}"
+                        immediate="true">
                         <button class="ui-button ui-widget ui-corner-all">
                             #{mensagem.Cadastrar} #{mensagem.Servidor} / #{mensagem.Listar} #{mensagem.Servidores}
                         </button>
@@ -41,7 +44,9 @@
                 </div>
 
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
-                    <h:commandLink action="espaco.xhtml">
+                    <h:commandLink 
+                        action="#{paginaMB.visitarPagina('espaco')}"
+                        immediate="true">
                         <button class="ui-button ui-widget ui-corner-all">
                             #{mensagem.Cadastrar} #{mensagem.Espaco} / #{mensagem.Listar} #{mensagem.Espaco}s
                         </button>
@@ -49,9 +54,21 @@
                 </div>
 
                 <div style="width: 1000px; margin: 0 auto; padding: 3px;">
-                    <h:commandLink action="vigilante.xhtml">
+                    <h:commandLink 
+                        action="#{paginaMB.visitarPagina('vigilante')}"
+                        immediate="true">
                         <button class="ui-button ui-widget ui-corner-all">
                             #{mensagem.Cadastrar} #{mensagem.Vigilante} / #{mensagem.Listar} #{mensagem.Vigilante}s
+                        </button>
+                    </h:commandLink>
+                </div>
+
+                <div style="width: 1000px; margin: 0 auto; padding: 3px;">
+                    <h:commandLink 
+                        action="#{paginaMB.visitarPagina('Relatorios/ocorrencia')}"
+                        immediate="true">
+                        <button class="ui-button ui-widget ui-corner-all">
+                            #{mensagem.RelatorioOcorrencias}
                         </button>
                     </h:commandLink>
                 </div>
@@ -59,13 +76,18 @@
 
             <div style="width: 1000px; margin: 0 auto;">
                 <h2 style="margin-bottom: 6px; text-align: center">#{mensagem.Espaco}s #{mensagem.Emprestados} / #{mensagem.Emprestar} #{mensagem.Espaco}s</h2>
-                <h:commandLink action="emprestimo.xhtml">
+                <h:commandLink 
+                    action="#{paginaMB.visitarPagina('emprestimo')}"
+                    immediate="true">
                     <button class="ui-button ui-widget ui-corner-all">
                         #{mensagem.Emprestar} #{mensagem.Espaco}
                     </button>
                 </h:commandLink>
 
-                <h:commandLink style="padding-left: 3px" action="Relatorios/emprestimo.xhtml">
+                <h:commandLink 
+                    style="padding-left: 3px" 
+                    action="#{paginaMB.visitarPagina('Relatorios/emprestimo')}"
+                    immediate="true">
                     <button class="ui-button ui-widget ui-corner-all">
                         #{mensagem.Relatorio}
                     </button>
@@ -107,131 +129,240 @@
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_SERVIDOR')}" 
                                     value="#{mensagem.EntregaDaChave} - #{mensagem.Servidor}"
-                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+                                    disabled="#{principalMB.desativarBotoes(emp)}"
+                                    immediate="true" />
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'ENTREGA_CHAVE_VIGILANTE')}" 
                                     value="#{mensagem.EntregaDaChave} - #{mensagem.Vigilante}"
-                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+                                    disabled="#{principalMB.desativarBotoes(emp)}"
+                                    immediate="true" />
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'REGISTRAR_OCORRENCIA')}" 
                                     value="#{mensagem.Ocorrencia}"
-                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+                                    disabled="#{principalMB.desativarBotoes(emp)}"
+                                    immediate="true" />
 
                                 <h:commandButton 
                                     action="#{principalMB.exibirModal(emp, 'CANCELAR_EMPRESTIMO')}" 
                                     value="#{mensagem.Cancelar} #{mensagem.Emprestimo}"
-                                    disabled="#{principalMB.desativarBotoes(emp)}"/>
+                                    disabled="#{principalMB.desativarBotoes(emp)}"
+                                    immediate="true" />
                             </h:panelGrid>
                         </h:panelGroup>
                     </div>
                 </ui:repeat>
             </div>
+        </h:form>
 
+        <h:form id="principal_modal_registrar_ocorrencia">
             <div style="display: #{principalMB.exibirModalOcorrencia ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
                     <h:outputText value="#{mensagem.Registrar} #{mensagem.Ocorrencia}" />
                     <br />
                     <br />
-                    <h:panelGroup>
-                        <h:panelGrid columns="2">
+                    <h:panelGroup id="principal_panel_ocorrencia">
+                        <h:panelGrid columns="3">
                             <h:outputText value="#{mensagem.Mensagem}: "/>
-                            <h:inputText value="#{principalMB.ocorrencia.ocorrido}" />
+                            <h:inputText
+                                id="principal_ocorrencia_mensagem"
+                                value="#{principalMB.ocorrencia.ocorrido}"
+                                required="true"
+                                requiredMessage="#{mensagem.MensagemObrigatoria}"
+                                size="20"
+                                validatorMessage="#{mensagem.MensagemPrecisa15Caracteres}">
+                                <f:validateLength minimum = "15"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_ocorrencia_mensagem" />
 
                             <h:outputText value="#{mensagem.Vigilante} (#{mensagem.DigiteSeus6PrimeirosDigitosDoCPF}): "/>
-                            <h:inputText id="principal_ocorrencia" value="#{principalMB.cpf}" size="6"/>
+                            <h:inputText 
+                                id="principal_ocorrencia_cpf" 
+                                value="#{principalMB.cpfOcorrencia}" 
+                                size="20"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                maxlength="6">
+                                <f:validateLength minimum = "6" maximum="6"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_ocorrencia_cpf" />
 
                             <h:outputText value="#{mensagem.Servidor} (SIAPE): "/>
-                            <h:inputText value="#{principalMB.siape}" size="14"/>
+                            <h:inputText 
+                                id="principal_ocorrencia_siape"
+                                value="#{principalMB.siapeOcorrencia}" 
+                                size="20"
+                                onkeypress="return permitirApenasNumeros(event);"
+                                maxlength="7">
+                                <f:validateLength minimum = "7" maximum="7"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_ocorrencia_siape" />
 
                             <h:outputLabel value="#{mensagem.PerdeuAChave}?" />
-                            <h:selectBooleanCheckbox value="#{principalMB.perdeuChave}" />
+                            <h:selectBooleanCheckbox 
+                                id="principal_ocorrencia_perdeuChave"
+                                value="#{principalMB.perdeuChave}" />
+                            <h:message style="color:red" for="principal_ocorrencia_perdeuChave" />
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.registrarOcorrencia}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
-
-                            <h:message for="principal_ocorrencia" />
+                            <h:commandButton 
+                                id="principal_ocorrencia_btnConfirmar"
+                                value="#{mensagem.Confirmar}" 
+                                action="#{principalMB.registrarOcorrencia}" />
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{principalMB.limparDados}"
+                                immediate="true"/>
+                            <h:message style="color:red" for="principal_ocorrencia_btnConfirmar" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
             </div>
+        </h:form>
 
+        <h:form id="principal_modal_cancelar_emprestimo">
             <div style="display: #{principalMB.exibirModalCancelar ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
                     <h:outputText value="#{mensagem.Cancelar} #{mensagem.Emprestimo}" />
                     <br />
                     <br />
-                    <h:panelGroup>
-                        <h:panelGrid columns="2">
+                    <h:panelGroup id="principal_panel_cancelar">
+                        <h:panelGrid columns="3">
                             <h:outputText value="#{mensagem.Servidor}: "/>
-                            <h:inputText 
-                                id="servidor_nome_principal_cancelar"
+                            <h:inputText
+                                id="principal_cancelar_servidor"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+                            <h:message style="color:red" for="principal_cancelar_servidor" />
 
                             <h:outputText value="#{mensagem.DigiteSeuSIAPEParaConfirmar}: "/>
-                            <h:inputText value="#{principalMB.siape}" size="14"/>
+                            <h:inputText 
+                                id="principal_cancelar_siape"
+                                value="#{principalMB.siapeCancelar}" 
+                                onkeypress="return permitirApenasNumeros(event);"
+                                size="20"
+                                maxlength="7"
+                                required="true"
+                                requiredMessage="#{mensagem.PreenchaSIAPEServidor}">
+                                <f:validateLength minimum = "7" maximum="7"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_cancelar_siape" />
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.cancelarEmprestimo}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
-
-                            <h:message for="servidor_nome_principal_cancelar" />
+                            <h:commandButton 
+                                id="principal_cancelar_btnConfirmar"
+                                value="#{mensagem.Confirmar}" 
+                                action="#{principalMB.cancelarEmprestimo}" />
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{principalMB.limparDados}"
+                                immediate="true"/>
+                            <h:message style="color:red" for="principal_cancelar_btnConfirmar" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
             </div>
+        </h:form>
 
+        <h:form id="principal_modal_confirmar_emprestimo_vigilante">
             <div style="display: #{principalMB.exibirModalVigilante ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
                     <h:outputText value="#{mensagem.FinalizarEmprestimo} - #{mensagem.Vigilante}" />
                     <br />
                     <br />
                     <h:panelGroup>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="3">
                             <h:outputText value="#{mensagem.Servidor} #{mensagem.Responsavel}"/>
                             <h:inputText 
-                                id="servidor_nome_principal_concluirV"
+                                id="principal_liberarVig_servidor"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+                            <h:message style="color:red" for="principal_liberarVig_servidor" />
 
                             <h:outputText value="#{mensagem.DigiteSeus6PrimeirosDigitosDoCPF} #{mensagem.ParaConfirmar}: "/>
-                            <h:inputText value="#{principalMB.cpfConfirmarSaida}" size="6"/>
+                            <h:inputText 
+                                id="principal_liberarVig_cpf"
+                                value="#{principalMB.cpfConfirmarSaida}" 
+                                onkeypress="return permitirApenasNumeros(event);"
+                                size="20"
+                                maxlength="6"
+                                required="true"
+                                requiredMessage="#{mensagem.PreenchaCPFVigilante}">
+                                <f:validateLength minimum = "6" maximum="6"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_liberarVig_cpf" />
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.concluirEmprestimo}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
-
-                            <h:message for="servidor_nome_principal_concluirV" />
+                            <h:commandButton 
+                                id="principal_liberarVig_btnConfirmar"
+                                value="#{mensagem.Confirmar}" 
+                                action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{principalMB.limparDados}"
+                                immediate="true"/>
+                            <h:message style="color:red" for="principal_liberarVig_btnConfirmar" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
             </div>
+        </h:form>
 
+        <h:form id="principal_modal_confirmar_emprestimo_servidor">
             <div style="display: #{principalMB.exibirModalServidor ? 'block' : 'none'}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); padding-top: 100px;">
                 <div style="background: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 30%;">
                     <h:outputText value="#{mensagem.FinalizarEmprestimo} - #{mensagem.Servidor}" />
                     <br />
                     <br />
                     <h:panelGroup>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="3">
                             <h:outputText value="#{mensagem.Servidor} #{mensagem.Responsavel}"/>
                             <h:inputText 
-                                id="servidor_nome_principal_concluir"
+                                id="principal_liberarServ_servidor"
                                 disabled="true" 
                                 value="#{principalMB.emprestimo.servidor.dadosPessoais.nome}" />
+                            <h:message style="color:red" for="principal_liberarServ_servidor" />
 
                             <h:outputText value="#{mensagem.DigiteSeuSIAPEParaConfirmar}: "/>
-                            <h:inputText value="#{principalMB.siape}" size="14"/>
+                            <h:inputText 
+                                id="principal_liberarServ_siape"
+                                value="#{principalMB.siapeConfirmarSaida}" 
+                                onkeypress="return permitirApenasNumeros(event);"
+                                size="20"
+                                maxlength="7"
+                                required="true"
+                                requiredMessage="#{mensagem.PreenchaSIAPEServidor}">
+                                <f:validateLength minimum = "7" maximum="7"/>
+                            </h:inputText>
+                            <h:message style="color:red" for="principal_liberarServ_siape" />
 
-                            <h:commandButton value="#{mensagem.Confirmar}" action="#{principalMB.concluirEmprestimo}" />
-                            <h:commandButton value="#{mensagem.Cancelar}" action="#{principalMB.limparDados}" />
-
-                            <h:message for="servidor_nome_principal_concluir" />
+                            <h:commandButton 
+                                id="principal_liberarServ_btnConfirmar"
+                                value="#{mensagem.Confirmar}" 
+                                action="#{principalMB.concluirEmprestimo}" />
+                            <h:commandButton 
+                                value="#{mensagem.Cancelar}" 
+                                action="#{principalMB.limparDados}" 
+                                immediate="true"/>
+                            <h:message style="color:red" for="principal_liberarServ_btnConfirmar" />
                         </h:panelGrid>
                     </h:panelGroup>
                 </div>
             </div>
         </h:form>
+
+        <script>
+            function permitirApenasNumeros(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[0-9]/.test(char);
+            }
+
+            function permitirApenasLetras(event) {
+                var key = event.keyCode || event.which;
+                var char = String.fromCharCode(key);
+
+                return /[a-zA-Z]/.test(char);
+            }
+        </script>
     </h:body>
 </html>
 

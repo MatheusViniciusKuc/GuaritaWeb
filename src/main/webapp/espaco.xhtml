@@ -14,7 +14,9 @@
     </head>
     <h:body>
         <h:form>
-            <h:commandLink action="faces/index.xhtml">
+            <h:commandLink 
+                action="#{paginaMB.visitarPagina('faces/index')}"
+                immediate="true">
                 <button class="ui-button ui-widget ui-corner-all">
                     Voltar
                 </button>
